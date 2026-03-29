@@ -29,6 +29,12 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  useEffect(() => {
+    if (settings?.restaurant_name) {
+      document.title = `${settings.restaurant_name} | สั่งอาหารออนไลน์`;
+    }
+  }, [settings?.restaurant_name]);
+
   const fetchSettings = async () => {
     const { data, error } = await supabase.from('settings').select('*').eq('id', 1).single();
     if (error) {
