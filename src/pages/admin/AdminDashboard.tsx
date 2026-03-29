@@ -1,10 +1,71 @@
-import { useState } from 'react';
+import { useState, useRef, MouseEvent } from 'react';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { DollarSign, ShoppingCart, TrendingUp, Users, QrCode } from 'lucide-react';
 import { useOrders } from '../../context/OrderContext';
 import { useMenu } from '../../context/MenuContext';
 import AdminSidebar from '../../components/AdminSidebar';
 import Modal from '../../components/Modal';
 import { QRCodeSVG } from 'qrcode.react';
+
+function TiltStatCard({ children, className }: { children: React.ReactNode, className: string }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x);
+  const mouseYSpring = useSpring(y);
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["5deg", "-5deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-5deg", "5deg"]);
+  const glareOpacity = useTransform(y, [-0.5, 0.5], [0, 0.1]);
+  const glareY = useTransform(y, [-0.5, 0.5], ["0%", "100%"]);
+  
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    x.set(mouseX / width - 0.5);
+    y.set(mouseY / height - 0.5);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
+  return (
+    <motion.div 
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        rotateX,
+        rotateY,
+        transformStyle: "preserve-3d",
+        position: 'relative',
+        overflow: 'hidden'
+      }}
+      className={className}
+    >
+      <motion.div 
+        className="glass-glare" 
+        style={{ 
+          opacity: glareOpacity, 
+          background: 'linear-gradient(rgba(255,255,255,0.4), transparent)',
+          position: 'absolute',
+          top: 0, left: 0, right: 0, height: '100%',
+          transform: `translateY(${glareY})`,
+          zIndex: 10,
+          pointerEvents: 'none',
+        }} 
+      />
+      {children}
+    </motion.div>
+  );
+}
 
 export default function AdminDashboard() {
   const { orders } = useOrders();
@@ -43,34 +104,34 @@ export default function AdminDashboard() {
         </div>
 
         <div className="stats-grid">
-          <div className="stat-card">
+          <TiltStatCard className="stat-card">
             <div className="stat-card-header">
               <div className="stat-card-icon orange"><DollarSign size={22} /></div>
             </div>
             <div className="stat-value">฿{totalRevenue.toLocaleString()}</div>
             <div className="stat-label">ยอดขายทั้งหมด</div>
-          </div>
-          <div className="stat-card">
+          </TiltStatCard>
+          <TiltStatCard className="stat-card">
             <div className="stat-card-header">
               <div className="stat-card-icon blue"><ShoppingCart size={22} /></div>
             </div>
             <div className="stat-value">{totalOrders}</div>
             <div className="stat-label">ออเดอร์ทั้งหมด</div>
-          </div>
-          <div className="stat-card">
+          </TiltStatCard>
+          <TiltStatCard className="stat-card">
             <div className="stat-card-header">
               <div className="stat-card-icon green"><TrendingUp size={22} /></div>
             </div>
             <div className="stat-value">{activeOrders}</div>
             <div className="stat-label">ออเดอร์ที่ดำเนินการ</div>
-          </div>
-          <div className="stat-card">
+          </TiltStatCard>
+          <TiltStatCard className="stat-card">
             <div className="stat-card-header">
               <div className="stat-card-icon purple"><Users size={22} /></div>
             </div>
             <div className="stat-value">{totalItems}</div>
             <div className="stat-label">เมนูทั้งหมด</div>
-          </div>
+          </TiltStatCard>
         </div>
 
         <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', fontWeight: 600, marginBottom: 16 }}>ออเดอร์ล่าสุด</h2>

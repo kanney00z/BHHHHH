@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useRef, MouseEvent } from 'react';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { Plus, Check, ImageIcon } from 'lucide-react';
 import { MenuItem } from '../types';
 import { useCart } from '../context/CartContext';
@@ -24,8 +25,59 @@ export default function FoodCard({ item, onAddClick, disabled = false }: FoodCar
     setTimeout(() => setAdded(false), 800);
   };
 
+  // 3D Tilt Effect Setup
+  const cardRef = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x);
+  const mouseYSpring = useSpring(y);
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["7deg", "-7deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-7deg", "7deg"]);
+  const glareOpacity = useTransform(y, [-0.5, 0.5], [0, 0.15]);
+  const glareY = useTransform(y, [-0.5, 0.5], ["0%", "100%"]);
+  
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+    x.set(mouseX / width - 0.5);
+    y.set(mouseY / height - 0.5);
+  };
+
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
+
   return (
-    <div className={`food-card ${disabled ? 'opacity-50 grayscale' : ''}`}>
+    <motion.div 
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        rotateX,
+        rotateY,
+        transformStyle: "preserve-3d",
+      }}
+      className={`food-card ${disabled ? 'opacity-50 grayscale' : ''}`}
+    >
+      <motion.div 
+        className="glass-glare" 
+        style={{ 
+          opacity: glareOpacity, 
+          background: 'linear-gradient(rgba(255,255,255,0.8), transparent)',
+          position: 'absolute',
+          top: 0, left: 0, right: 0, height: '100%',
+          transform: `translateY(${glareY})`,
+          zIndex: 10,
+          pointerEvents: 'none',
+        }} 
+      />
       <div className="food-card-image">
         {item.image ? (
           <img src={item.image} alt={item.name} loading="lazy" />
@@ -56,6 +108,6 @@ export default function FoodCard({ item, onAddClick, disabled = false }: FoodCar
           </button>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
