@@ -10,7 +10,6 @@ export default function AdminLogin() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isLogin, setIsLogin] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -25,13 +24,9 @@ export default function AdminLogin() {
     setIsSubmitting(true);
     setErrorMsg('');
 
-    if (isLogin) {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) setErrorMsg(error.message);
-    } else {
-      const { error } = await supabase.auth.signUp({ email, password });
-      if (error) setErrorMsg(error.message);
-      else setErrorMsg('สมัครสมาชิกสำเร็จ กรุณาเข้าสู่ระบบ');
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      setErrorMsg('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
     }
     
     setIsSubmitting(false);
@@ -47,8 +42,8 @@ export default function AdminLogin() {
           <div style={{ display: 'inline-flex', background: 'var(--bg-glass)', padding: 16, borderRadius: '50%', marginBottom: 16, border: '1px solid var(--bg-glass-border)' }}>
             <Lock size={32} color="var(--accent)" />
           </div>
-          <h2 style={{ fontFamily: 'var(--font-display)' }}>{isLogin ? 'เข้าสู่ระบบร้าน' : 'สร้างบัญชีแอดมิน'}</h2>
-          <p style={{ color: 'var(--text-muted)' }}>สำหรับผู้ดูแลระบบร้านอาหาร</p>
+          <h2 style={{ fontFamily: 'var(--font-display)' }}>เข้าสู่ระบบร้าน</h2>
+          <p style={{ color: 'var(--text-muted)' }}>สำหรับผู้ดูแลระบบร้านอาหาร (Admin Only)</p>
         </div>
 
         {errorMsg && (
@@ -89,18 +84,14 @@ export default function AdminLogin() {
           </div>
 
           <button type="submit" className="btn-primary" style={{ height: 48, marginTop: 8 }} disabled={isSubmitting}>
-            {isSubmitting ? 'กำลังดำเนินการ...' : isLogin ? 'เข้าสู่ระบบ' : 'สมัครสมาชิก'} <ArrowRight size={18} />
+            {isSubmitting ? 'กำลังตรวจสอบ...' : 'เข้าสู่ระบบ'} <ArrowRight size={18} />
           </button>
         </form>
 
         <div style={{ textAlign: 'center', marginTop: 24 }}>
-          <button 
-            type="button" 
-            onClick={() => { setIsLogin(!isLogin); setErrorMsg(''); }}
-            style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '0.9rem' }}
-          >
-            {isLogin ? 'ต้องการสร้างบัญชีแอดมินใหม่? สมัครสมาชิก' : 'กลับไปหน้าเข้าสู่ระบบ'}
-          </button>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+            หากลืมรหัสผ่านหรือต้องการเพิ่มบัญชีแอดมิน กรุณาติดต่อผู้พัฒนาระบบ
+          </p>
         </div>
 
       </div>
