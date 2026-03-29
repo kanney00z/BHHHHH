@@ -3,6 +3,7 @@ import AdminSidebar from '../../components/AdminSidebar';
 import { supabase } from '../../lib/supabase';
 import { Promotion } from '../../types';
 import { Plus, Edit2, Trash2, CheckCircle, XCircle } from 'lucide-react';
+import Modal from '../../components/Modal';
 
 export default function AdminPromotions() {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
@@ -10,6 +11,7 @@ export default function AdminPromotions() {
   
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   
   // Form State
   const [code, setCode] = useState('');
@@ -114,16 +116,21 @@ export default function AdminPromotions() {
     fetchPromotions();
   };
 
-  const handleDelete = async (id: string) => {
-    if (window.confirm('คุณแน่ใจหรือไม่ว่าต้องการลบรหัสส่วนลดนี้?')) {
-      const { error } = await supabase.from('promotions').delete().eq('id', id);
-      if (error) {
-        console.error('Delete error:', error);
-        alert('ไม่สามารถลบได้ กรุณาตรวจสอบสิทธิ์ (RLS): ' + error.message);
-      } else {
-        fetchPromotions();
-      }
+  const handleDeleteClick = (id: string) => {
+    setDeleteConfirmId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirmId) return;
+    
+    const { error } = await supabase.from('promotions').delete().eq('id', deleteConfirmId);
+    if (error) {
+      console.error('Delete error:', error);
+      alert('ไม่สามารถลบได้ (อาจติดสิทธิ์ RLS หรือถูกเรียกใช้งานอยู่): ' + error.message);
+    } else {
+      fetchPromotions();
     }
+    setDeleteConfirmId(null);
   };
 
   return (
@@ -249,7 +256,7 @@ export default function AdminPromotions() {
                         <button onClick={() => handleEdit(promo)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--text-muted)' }}>
                           <Edit2 size={20} />
                         </button>
-                        <button onClick={() => handleDelete(promo.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--danger)' }}>
+                        <button onClick={() => handleDeleteClick(promo.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 4, color: 'var(--danger)' }}>
                           <Trash2 size={20} />
                         </button>
                       </div>
@@ -261,6 +268,17 @@ export default function AdminPromotions() {
           </div>
         </div>
       </div>
+      <Modal isOpen={deleteConfirmId !== null} onClose={() => setDeleteConfirmId(null)} title="⚠️ ยืนยันการลบ">
+        <div style={{ padding: '20px', textAlign: 'center' }}>
+          <Trash2 size={48} style={{ color: 'var(--danger)', margin: '0 auto 16px', opacity: 0.8 }} />
+          <h3 style={{ marginBottom: '8px' }}>คุณแน่ใจหรือไม่?</h3>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>การลบรหัสส่วนลดนี้จะไม่สามารถกู้คืนได้</p>
+          <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+            <button className="btn-secondary" onClick={() => setDeleteConfirmId(null)} style={{ flex: 1 }}>ยกเลิก</button>
+            <button className="btn-primary" onClick={confirmDelete} style={{ flex: 1, background: 'var(--danger)', borderColor: 'var(--danger)' }}>ลบเลย</button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
