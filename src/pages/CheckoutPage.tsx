@@ -398,7 +398,7 @@ export default function CheckoutPage() {
                 value={promoCodeInput}
                 onChange={e => setPromoCodeInput(e.target.value)}
                 placeholder="กรอกรหัสส่วนลด..."
-                style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-primary)', textTransform: 'uppercase' }}
+                style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-primary)', color: 'var(--text-primary)', textTransform: 'uppercase' }}
                 disabled={activePromoCode.length > 0}
               />
               {activePromoCode ? (
