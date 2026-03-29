@@ -4,10 +4,10 @@
   --bg-primary: #000000;
   --bg-secondary: #0a0a0a;
   --bg-card: rgba(255, 255, 255, 0.04);
-  --bg-card-hover: rgba(255, 255, 255, 0.08);
-  --bg-glass: rgba(18, 18, 18, 0.65);
-  --bg-glass-border: rgba(255, 255, 255, 0.1);
-  --glass-border-hover: rgba(255, 255, 255, 0.25);
+  --bg-card-hover: rgba(255, 255, 255, 0.09);
+  --bg-glass: rgba(12, 12, 15, 0.7);
+  --bg-glass-border: rgba(255, 255, 255, 0.12);
+  --glass-border-hover: rgba(255, 255, 255, 0.35);
   
   --text-primary: #f5f5f7;
   --text-secondary: #86868b;
@@ -34,14 +34,15 @@
   --radius-lg: 24px;
   --radius-xl: 32px;
   
-  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.6), 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  --shadow-glow: 0 0 24px rgba(255, 0, 85, 0.3), 0 8px 16px rgba(0, 0, 0, 0.5);
-  --shadow-cyan: 0 0 24px rgba(0, 243, 255, 0.3);
+  /* NEW 3D VISION PRO SHADOWS & BEVELS */
+  --shadow-sm: 0 8px 16px rgba(0, 0, 0, 0.5), inset 0 2px 3px rgba(255, 255, 255, 0.15), inset 0 -2px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 16px 32px rgba(0, 0, 0, 0.6), 0 8px 16px rgba(0, 0, 0, 0.4), inset 0 2px 5px rgba(255, 255, 255, 0.2), inset 0 -4px 8px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 32px 64px rgba(0, 0, 0, 0.7), 0 16px 32px rgba(0, 0, 0, 0.5), inset 0 2px 6px rgba(255, 255, 255, 0.25), inset 0 -6px 12px rgba(0, 0, 0, 0.7);
+  --shadow-glass: 0 12px 36px 0 rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  --shadow-glow: 0 0 32px rgba(255, 0, 85, 0.4), 0 16px 32px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.3), inset 0 -2px 4px rgba(0, 0, 0, 0.5);
+  --shadow-cyan: 0 0 32px rgba(0, 243, 255, 0.4), 0 16px 32px rgba(0, 0, 0, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.3);
   
-  --glass-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.15), inset 0 0 20px rgba(255, 255, 255, 0.02);
+  --glass-highlight: inset 0 2px 4px rgba(255, 255, 255, 0.15), inset 0 -3px 6px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.05);
   
   --transition-fast: 0.2s cubic-bezier(0.25, 1, 0.5, 1);
   --transition-normal: 0.4s cubic-bezier(0.25, 1, 0.5, 1);
@@ -314,22 +315,31 @@ img {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 14px 32px;
+  padding: 16px 36px;
   background: var(--accent-gradient);
   color: white;
-  font-size: 1rem;
-  font-weight: 600;
+  border: none;
+  border-top: 2px solid rgba(255, 255, 255, 0.5);
+  border-bottom: 4px solid rgba(0, 0, 0, 0.6);
+  font-size: 1.1rem;
+  font-weight: 700;
   border-radius: var(--radius-lg);
-  transition: all var(--transition-normal);
-  box-shadow: 0 0 15px var(--accent-glow);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.3);
   text-transform: uppercase;
   letter-spacing: 1px;
 }
 
 .hero-cta:hover {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: 0 0 30px var(--accent-glow), 0 0 15px var(--cyan-glow);
-  background: linear-gradient(135deg, #ff3377, #ff6b35);
+  transform: translateY(-4px) scale(1.03);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px var(--accent-glow), inset 0 2px 6px rgba(255, 255, 255, 0.4);
+}
+
+.hero-cta:active {
+  transform: translateY(2px) scale(0.98);
+  border-top-color: rgba(0, 0, 0, 0.2);
+  border-bottom-width: 1px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5), inset 0 6px 12px rgba(0, 0, 0, 0.5);
 }
 
 /* ========================= CATEGORIES ========================= */
@@ -399,13 +409,18 @@ img {
 .food-card {
   background: var(--bg-card);
   border: 1px solid var(--bg-glass-border);
-  border-radius: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.25);
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 28px;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
   position: relative;
   will-change: transform;
   box-shadow: var(--shadow-sm);
-  box-shadow: var(--glass-highlight), var(--shadow-sm); /* Fallback and then inset glow */
+  box-shadow: var(--glass-highlight), var(--shadow-md);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  transform-style: preserve-3d;
 }
 
 .food-card::before {
@@ -413,9 +428,9 @@ img {
   position: absolute;
   top: 0; left: -100%;
   width: 50%; height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.15), transparent);
   transform: skewX(-25deg);
-  transition: all 0.6s ease;
+  transition: all 0.7s ease;
   z-index: 10;
   pointer-events: none;
 }
@@ -425,15 +440,17 @@ img {
 }
 
 .food-card:hover {
-  /* Let framer-motion handle transform from now on, but apply these CSS if no framer motion: */
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.4);
   box-shadow: var(--glass-highlight), var(--shadow-lg), var(--shadow-glow);
+  transform: translateY(-8px) perspective(1000px) rotateX(2deg) rotateY(-2deg) !important;
 }
 
 .food-card-image {
   position: relative;
   height: 200px;
   overflow: hidden;
+  transform: translateZ(20px);
+  transform-style: preserve-3d;
 }
 
 .food-card-image img {
@@ -444,7 +461,7 @@ img {
 }
 
 .food-card:hover .food-card-image img {
-  transform: scale(1.04);
+  transform: scale(1.06) translateZ(10px);
 }
 
 .food-card-badges {
@@ -483,6 +500,7 @@ img {
 
 .food-card-body {
   padding: 16px;
+  transform: translateZ(30px);
 }
 
 .food-card-body h3 {
@@ -523,21 +541,33 @@ img {
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  background: transparent;
+  background: rgba(0, 243, 255, 0.05);
   color: var(--cyan);
-  border: 1px solid var(--cyan);
+  border: 1px solid rgba(0, 243, 255, 0.3);
+  border-top: 1px solid rgba(0, 243, 255, 0.6);
+  border-bottom: 2px solid rgba(0, 243, 255, 0.1);
   border-radius: var(--radius-md);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.1);
   font-size: 0.85rem;
   font-weight: 600;
-  transition: all var(--transition-fast);
+  transition: all 0.15s ease-out;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  backdrop-filter: blur(8px);
 }
 
 .add-to-cart-btn:hover {
-  transform: scale(1.05);
-  background: rgba(0, 243, 255, 0.1);
-  box-shadow: var(--shadow-cyan);
+  transform: translateY(-2px);
+  background: rgba(0, 243, 255, 0.15);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 243, 255, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  border-color: rgba(0, 243, 255, 0.8);
+}
+
+.add-to-cart-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6), inset 0 4px 8px rgba(0, 0, 0, 0.5);
+  border-top-color: rgba(0, 243, 255, 0.2);
+  border-bottom-color: rgba(0, 243, 255, 0.5);
 }
 
 .add-to-cart-btn.added {
@@ -578,20 +608,20 @@ img {
   max-width: 90vw;
   height: 100%;
   height: 100dvh;
-  background: rgba(18, 18, 18, 0.7);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border-left: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.5), inset 1px 0 1px rgba(255, 255, 255, 0.1);
+  background: rgba(18, 18, 18, 0.65);
+  backdrop-filter: blur(48px);
+  -webkit-backdrop-filter: blur(48px);
+  border-left: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: -30px 0 80px rgba(0, 0, 0, 0.8), inset 2px 0 4px rgba(255, 255, 255, 0.2);
   z-index: 2001;
   display: flex;
   flex-direction: column;
-  transition: right var(--transition-normal);
+  transition: right 0.5s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .cart-drawer.open {
   right: 0;
-  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.5);
+  box-shadow: -20px 0 60px rgba(0, 0, 0, 0.7), -10px 0 30px rgba(0, 0, 0, 0.5);
 }
 
 .cart-drawer-header {
@@ -749,28 +779,43 @@ img {
 
 .checkout-btn {
   width: 100%;
-  padding: 14px;
+  padding: 16px;
   background: var(--accent-gradient);
   color: white;
-  border-radius: var(--radius-md);
-  font-size: 1rem;
-  font-weight: 600;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.4);
+  border-bottom: 3px solid rgba(0, 0, 0, 0.5);
+  border-radius: var(--radius-lg);
+  font-size: 1.05rem;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all var(--transition-fast);
+  transition: all 0.15s ease-out;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .checkout-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-glow);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5), 0 0 25px var(--accent-glow), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+.checkout-btn:active {
+  transform: translateY(2px);
+  border-bottom-width: 1px;
+  border-top-color: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.6), inset 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 .checkout-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
+  border-bottom-width: 1px;
 }
 
 /* ========================= CHECKOUT PAGE ========================= */
@@ -1380,17 +1425,19 @@ img {
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 3000;
-  animation: fadeIn 0.2s ease;
+  animation: fadeIn 0.3s ease;
+  backdrop-filter: blur(8px);
 }
 
 .modal-content {
-  background: var(--bg-card);
-  border: 1px solid var(--bg-glass-border);
+  background: rgba(18, 18, 22, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-top: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: var(--radius-lg);
   padding: 32px;
   width: 90%;
@@ -1398,7 +1445,16 @@ img {
   max-height: 85vh;
   max-height: 85dvh;
   overflow-y: auto;
-  animation: scaleIn 0.25s ease;
+  animation: modalPop 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.8), inset 0 2px 4px rgba(255, 255, 255, 0.2), 0 0 40px rgba(0, 243, 255, 0.1);
+  backdrop-filter: blur(48px);
+  -webkit-backdrop-filter: blur(48px);
+  transform-style: preserve-3d;
+}
+
+@keyframes modalPop {
+  0% { opacity: 0; transform: scale(0.9) translateZ(-50px); }
+  100% { opacity: 1; transform: scale(1) translateZ(0); }
 }
 
 .modal-content h2 {
