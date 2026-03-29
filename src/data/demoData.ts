@@ -154,8 +154,8 @@ export const demoOrders: Order[] = [
   {
     id: 'order-001',
     items: [
-      { menuItem: defaultMenuItems[0], quantity: 2 },
-      { menuItem: defaultMenuItems[9], quantity: 1 },
+      { cartItemId: 'demo-cart-1', menuItem: defaultMenuItems[0], quantity: 2 },
+      { cartItemId: 'demo-cart-2', menuItem: defaultMenuItems[9], quantity: 1 },
     ],
     total: 437,
     status: 'delivered',
@@ -165,12 +165,13 @@ export const demoOrders: Order[] = [
     paymentMethod: 'promptpay',
     createdAt: '2026-03-26T10:30:00Z',
     updatedAt: '2026-03-26T11:15:00Z',
+    orderType: 'delivery',
   },
   {
     id: 'order-002',
     items: [
-      { menuItem: defaultMenuItems[2], quantity: 1 },
-      { menuItem: defaultMenuItems[4], quantity: 2 },
+      { cartItemId: 'demo-cart-3', menuItem: defaultMenuItems[2], quantity: 1 },
+      { cartItemId: 'demo-cart-4', menuItem: defaultMenuItems[4], quantity: 2 },
     ],
     total: 597,
     status: 'preparing',
@@ -180,5 +181,6 @@ export const demoOrders: Order[] = [
     paymentMethod: 'cash',
     createdAt: '2026-03-27T05:45:00Z',
     updatedAt: '2026-03-27T05:50:00Z',
+    orderType: 'delivery',
   },
 ];
