@@ -64,10 +64,11 @@ export interface CartItem {
   quantity: number;
   note?: string;
   customName?: string;
+  isCustomItem?: boolean;
   selectedOptions?: SelectedOption[];
 }
 
-export type OrderStatus = 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled';
+export type OrderStatus = 'pending_pricing' | 'awaiting_payment' | 'pending' | 'confirmed' | 'preparing' | 'delivering' | 'delivered' | 'cancelled';
 export type OrderType = 'delivery' | 'dine_in' | 'takeaway';
 
 export interface Order {

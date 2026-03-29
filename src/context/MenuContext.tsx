@@ -57,15 +57,19 @@ export function MenuProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     fetchMenuData();
 
+    const channelName = `menu-channel-${Math.random().toString(36).substring(7)}`;
     const channel = supabase
-      .channel('menu_updates')
+      .channel(channelName)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'menu_items' }, () => {
         fetchMenuData();
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, () => {
         fetchMenuData();
       })
-      .subscribe();
+      .subscribe((status, err) => {
+        if (err) console.error('Menu Realtime Error', err);
+        console.log('Menu channel status:', status);
+      });
 
     return () => {
       supabase.removeChannel(channel);

@@ -6,6 +6,8 @@ import { useSettings } from '../context/SettingsContext';
 import { MenuItem } from '../types';
 import FoodCard from '../components/FoodCard';
 import MenuItemModal from '../components/MenuItemModal';
+import CustomOrderModal from '../components/CustomOrderModal';
+import { ChefHat } from 'lucide-react';
 
 export default function HomePage() {
   const { menuItems, categories } = useMenu();
@@ -13,6 +15,7 @@ export default function HomePage() {
   const [activeCat, setActiveCat] = useState('cat-1');
   const [search, setSearch] = useState('');
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
+  const [isCustomModalOpen, setIsCustomModalOpen] = useState(false);
 
   const checkIsStoreOpen = () => {
     if (!settings?.auto_close_enabled || !settings.opening_time || !settings.closing_time) return true;
@@ -128,6 +131,16 @@ export default function HomePage() {
 
         {/* Categories */}
         <section className="categories-section">
+          <div style={{ padding: '0 20px 20px', maxWidth: '800px', margin: '0 auto' }}>
+            <button 
+              className="btn-primary" 
+              style={{ width: '100%', padding: '16px', borderRadius: '12px', fontSize: '1.1rem', background: 'linear-gradient(45deg, var(--accent), #ff4b2b)', border: 'none', boxShadow: '0 8px 24px rgba(255,107,107,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+              onClick={() => setIsCustomModalOpen(true)}
+            >
+              <ChefHat size={24} /> สั่งเมนูตามใจฉัน (ให้ร้านประเมินราคา)
+            </button>
+          </div>
+
           <div className="category-tabs">
             {categories.map(cat => (
               <button
@@ -176,6 +189,11 @@ export default function HomePage() {
       {selectedItem && (
         <MenuItemModal item={selectedItem} onClose={() => setSelectedItem(null)} />
       )}
+
+      <CustomOrderModal 
+        isOpen={isCustomModalOpen} 
+        onClose={() => setIsCustomModalOpen(false)} 
+      />
     </div>
   );
 }

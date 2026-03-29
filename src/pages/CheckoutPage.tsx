@@ -132,6 +132,8 @@ export default function CheckoutPage() {
 
   const deliveryFee = orderType === 'delivery' ? computedDeliveryFee : 0;
   const grandTotal = Math.max(0, totalPrice - discountAmount) + deliveryFee;
+  
+  const hasCustomItems = items.some(i => i.menuItem.id.startsWith('custom-') || i.isCustomItem);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -150,7 +152,7 @@ export default function CheckoutPage() {
     
     let paymentSlipUrl = '';
 
-    if (payment === 'promptpay') {
+    if (payment === 'promptpay' && !hasCustomItems) {
       if (!paymentSlip) {
         alert('กรุณาแนบสลิปโอนเงิน');
         return;
@@ -336,7 +338,8 @@ export default function CheckoutPage() {
           {/* Payment */}
           <div className="form-section">
             <h3><CreditCard size={18} /> ช่องทางชำระเงิน</h3>
-            <div className="payment-options">
+            
+            <div className="payment-options" style={{ marginBottom: hasCustomItems ? 24 : 0 }}>
               {settings?.promptpay_number && (
                 <div className={`payment-option ${payment === 'promptpay' ? 'selected' : ''}`} onClick={() => setPayment('promptpay')}>
                   <div className="pay-icon">📱</div>
@@ -352,38 +355,48 @@ export default function CheckoutPage() {
                 <div className="pay-label">บัตรเครดิต</div>
               </div>
             </div>
-
-            {payment === 'promptpay' && settings?.promptpay_number && (
-              <div style={{ marginTop: 24, padding: 24, background: 'var(--bg-lighter)', borderRadius: 16, border: '1px solid var(--border)', textAlign: 'center' }}>
-                <h4 style={{ marginBottom: 16 }}>แสกนเพื่อชำระเงิน</h4>
-                <div style={{ background: 'white', padding: 16, display: 'inline-block', borderRadius: 16, marginBottom: 16 }}>
-                  <QRCodeCanvas value={payload} size={200} />
-                </div>
-                <p style={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: 4 }}>฿{grandTotal}</p>
-                <p style={{ marginBottom: 4 }}>บัญชี: {settings?.promptpay_name}</p>
-                <p style={{ color: 'var(--text-muted)' }}>พร้อมเพย์: {settings?.promptpay_number}</p>
-                
-                <div style={{ marginTop: 24, textAlign: 'left' }}>
-                  <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>อัพโหลดสลิปโอนเงิน *</label>
-                  <input 
-                    type="file" 
-                    accept="image/*" 
-                    onChange={e => {
-                      if (e.target.files && e.target.files.length > 0) {
-                        setPaymentSlip(e.target.files[0]);
-                      }
-                    }} 
-                    style={{ 
-                      width: '100%', 
-                      padding: 12, 
-                      background: 'var(--surface)', 
-                      borderRadius: 8,
-                      border: '1px dashed var(--border)'
-                    }}
-                    required={payment === 'promptpay'}
-                  />
-                </div>
+            
+            {hasCustomItems ? (
+              <div style={{ marginTop: 16, padding: 20, background: 'var(--bg-glass)', borderRadius: 16, border: '1px solid var(--warning)', textAlign: 'center' }}>
+                <p style={{ color: 'var(--warning)', fontWeight: 600, marginBottom: 8 }}>⚠️ ออเดอร์ของคุณมีรายการสั่งพิเศษที่ต้องประเมินราคา</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                  ระบบจะข้ามขั้นตอนการชำระเงินไปก่อน กรุณากด "ยืนยันออเดอร์"<br/>
+                  จากนั้นทางร้านจะประเมินราคา เมื่อเสร็จแล้วคุณจะสามารถโอนจ่ายได้ในหน้า <b>ติดตามออเดอร์</b>
+                </p>
               </div>
+            ) : (
+              payment === 'promptpay' && settings?.promptpay_number && (
+                <div style={{ marginTop: 24, padding: 24, background: 'var(--bg-lighter)', borderRadius: 16, border: '1px solid var(--border)', textAlign: 'center' }}>
+                  <h4 style={{ marginBottom: 16 }}>แสกนเพื่อชำระเงิน</h4>
+                  <div style={{ background: 'white', padding: 16, display: 'inline-block', borderRadius: 16, marginBottom: 16 }}>
+                    <QRCodeCanvas value={payload} size={200} />
+                  </div>
+                  <p style={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: 4 }}>฿{grandTotal}</p>
+                  <p style={{ marginBottom: 4 }}>บัญชี: {settings?.promptpay_name}</p>
+                  <p style={{ color: 'var(--text-muted)' }}>พร้อมเพย์: {settings?.promptpay_number}</p>
+                  
+                  <div style={{ marginTop: 24, textAlign: 'left' }}>
+                    <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>อัพโหลดสลิปโอนเงิน *</label>
+                    <input 
+                      type="file" 
+                      accept="image/*" 
+                      onChange={e => {
+                        if (e.target.files && e.target.files.length > 0) {
+                          setPaymentSlip(e.target.files[0]);
+                        }
+                      }} 
+                      style={{ 
+                        width: '100%', 
+                        padding: 12, 
+                        background: 'var(--surface)', 
+                        borderRadius: 8,
+                        border: '1px dashed var(--border)'
+                      }}
+                      required={payment === 'promptpay'}
+                    />
+                  </div>
+                </div>
+              )
             )}
           </div>
 
@@ -468,7 +481,7 @@ export default function CheckoutPage() {
             )}
             <div className="order-summary-total">
               <span>รวมทั้งหมด</span>
-              <span className="price">฿{grandTotal}</span>
+              <span className="price">{hasCustomItems ? 'รอประเมิน' : `฿${grandTotal}`}</span>
             </div>
           </div>
 

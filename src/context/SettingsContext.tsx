@@ -17,12 +17,16 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     fetchSettings();
 
+    const channelName = `settings-channel-${Math.random().toString(36).substring(7)}`;
     const channel = supabase
-      .channel('settings_updates')
+      .channel(channelName)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'settings' }, () => {
         fetchSettings();
       })
-      .subscribe();
+      .subscribe((status, err) => {
+        if (err) console.error('Settings Realtime Error', err);
+        console.log('Settings channel status:', status);
+      });
 
     return () => {
       supabase.removeChannel(channel);

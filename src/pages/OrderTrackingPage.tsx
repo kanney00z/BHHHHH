@@ -1,24 +1,21 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Check, ArrowRight, Clock, ChefHat, Truck, PartyPopper } from 'lucide-react';
+import { Check, ArrowRight, Clock, ChefHat, Truck, PartyPopper, CreditCard, Upload } from 'lucide-react';
 import { useOrders } from '../context/OrderContext';
-
-const steps = [
-  { key: 'confirmed', label: 'ยืนยันแล้ว', desc: 'ร้านอาหารได้รับออเดอร์แล้ว', icon: Check },
-  { key: 'preparing', label: 'กำลังเตรียม', desc: 'เชฟกำลังปรุงอาหาร', icon: ChefHat },
-  { key: 'delivering', label: 'กำลังจัดส่ง', desc: 'ไรเดอร์กำลังนำส่ง', icon: Truck },
-  { key: 'delivered', label: 'จัดส่งแล้ว', desc: 'อาหารมาถึงแล้ว!', icon: PartyPopper },
-];
-
-function getStepIndex(status: string) {
-  const idx = steps.findIndex(s => s.key === status);
-  return idx >= 0 ? idx : 0;
-}
+import { useSettings } from '../context/SettingsContext';
+import { supabase } from '../lib/supabase';
+import generatePayload from 'promptpay-qr';
+import { QRCodeCanvas } from 'qrcode.react';
 
 export default function OrderTrackingPage() {
   const { orderId } = useParams();
-  const { getOrder } = useOrders();
+  const { getOrder, updateOrderStatus } = useOrders();
+  const { settings } = useSettings();
   const navigate = useNavigate();
   const order = orderId ? getOrder(orderId) : undefined;
+  
+  const [paymentSlip, setPaymentSlip] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   if (!order) {
     return (
@@ -35,7 +32,76 @@ export default function OrderTrackingPage() {
     );
   }
 
-  const currentIdx = getStepIndex(order.status);
+  const hasCustomItems = order.items.some(i => i.customName && (i.menuItem.id === 'unknown' || i.menuItem.price === 0));
+
+  let steps = [
+    { key: 'confirmed', label: 'รับออเดอร์', desc: 'ร้านอาหารได้รับออเดอร์แล้ว', icon: Check },
+    { key: 'preparing', label: 'กำลังเตรียม', desc: 'เชฟกำลังปรุงอาหาร', icon: ChefHat },
+    { key: 'delivering', label: 'กำลังจัดส่ง', desc: 'ไรเดอร์กำลังนำส่ง', icon: Truck },
+    { key: 'delivered', label: 'จัดส่งแล้ว', desc: 'อาหารมาถึงแล้ว!', icon: PartyPopper },
+  ];
+
+  if (hasCustomItems || order.status === 'pending_pricing' || order.status === 'awaiting_payment') {
+    steps = [
+      { key: 'pending_pricing', label: 'รอประเมินราคา', desc: 'ร้านกำลังตรวจสอบยอดเงิน', icon: Clock },
+      { key: 'awaiting_payment', label: 'รอชำระเงิน', desc: 'กรุณาโอนเงินตามยอดที่ระบุ', icon: CreditCard },
+      ...steps
+    ];
+  }
+
+  // Treat 'pending' the same as 'pending_pricing' visually if custom order
+  let virtualStatus = order.status;
+  if (virtualStatus === 'pending' && hasCustomItems) {
+    virtualStatus = 'pending_pricing';
+  } else if (virtualStatus === 'pending' && !hasCustomItems) {
+    virtualStatus = 'confirmed'; // Treat normal pending as beginning of confirmed
+  }
+
+  const currentIdx = steps.findIndex(s => s.key === virtualStatus) >= 0 
+                     ? steps.findIndex(s => s.key === virtualStatus) 
+                     : 0;
+                     
+  const handleUploadSlip = async () => {
+    if (!paymentSlip || !orderId) return;
+    setIsUploading(true);
+    try {
+      const fileExt = paymentSlip.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const { error: uploadError } = await supabase.storage.from('payment_slips').upload(fileName, paymentSlip);
+      
+      if (uploadError) throw uploadError;
+      
+      const { data: urlData } = supabase.storage.from('payment_slips').getPublicUrl(fileName);
+      
+      await supabase.from('orders').update({ 
+        payment_slip_url: urlData.publicUrl,
+        status: 'pending' // Send back to pending for admin to confirm payment
+      }).eq('id', orderId);
+
+      if (order) {
+        // Create full updated order payload
+        const updatedOrder = {
+          ...order,
+          paymentSlipUrl: urlData.publicUrl,
+          status: 'pending'
+        };
+        // Trigger LINE Notify for the new slip
+        supabase.functions.invoke('line-notify', {
+          body: updatedOrder
+        }).catch(err => console.error('Failed to trigger LINE Notify:', err));
+        
+        // Update local state if needed
+        updateOrderStatus(orderId, 'pending');
+      }
+      
+      alert('อัปโหลดสลิปสำเร็จ! ร้านกำลังตรวจสอบอีกครั้งครับ');
+    } catch (e) {
+      console.error(e);
+      alert('เกิดข้อผิดพลาดในการอัปโหลด');
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   return (
     <div className="main-content">
@@ -79,6 +145,55 @@ export default function OrderTrackingPage() {
             })}
           </div>
 
+          {order.paymentSlipUrl && (
+            <div style={{ marginTop: 20, padding: 16, background: 'var(--surface)', borderRadius: 12, border: '1px solid var(--border)', textAlign: 'center' }}>
+              <h4 style={{ marginBottom: 12, color: 'var(--text-primary)' }}>✅ แนบสลิปเรียบร้อยแล้ว</h4>
+              <a href={order.paymentSlipUrl} target="_blank" rel="noreferrer">
+                <img 
+                  src={order.paymentSlipUrl} 
+                  alt="Payment Slip" 
+                  style={{ maxWidth: '100%', maxHeight: '300px', borderRadius: 8, objectFit: 'contain' }}
+                />
+              </a>
+              <p style={{ marginTop: 8, fontSize: '0.85rem', color: 'var(--text-muted)' }}>* คลิกที่รูปเพื่อดูขนาดเต็ม</p>
+            </div>
+          )}
+
+          {order.status === 'awaiting_payment' && order.paymentMethod === 'promptpay' && settings?.promptpay_number && (
+            <div style={{ marginTop: 24, padding: 24, background: 'var(--bg-lighter)', borderRadius: 16, border: '1px solid var(--accent)', textAlign: 'center' }}>
+              <h3 style={{ marginBottom: 16, color: 'var(--accent)' }}>แสกนเพื่อชำระเงินยอดใหม่</h3>
+              <div style={{ background: 'white', padding: 16, display: 'inline-block', borderRadius: 16, marginBottom: 16 }}>
+                 <QRCodeCanvas value={generatePayload(settings.promptpay_number, { amount: order.total })} size={200} />
+              </div>
+              <p style={{ fontWeight: 'bold', fontSize: '1.4rem', marginBottom: 4 }}>฿{order.total}</p>
+              <p style={{ color: 'var(--text-muted)' }}>พร้อมเพย์: {settings.promptpay_number}</p>
+              
+              <div style={{ marginTop: 24, textAlign: 'left' }}>
+                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>อัพโหลดสลิปโอนเงิน *</label>
+                <div style={{ display: 'flex', gap: 12 }}>
+                  <input 
+                    type="file" 
+                    accept="image/*" 
+                    onChange={e => {
+                      if (e.target.files && e.target.files.length > 0) {
+                        setPaymentSlip(e.target.files[0]);
+                      }
+                    }} 
+                    style={{ flex: 1, padding: 12, background: 'var(--surface)', borderRadius: 8, border: '1px dashed var(--border)' }}
+                  />
+                  <button 
+                    onClick={handleUploadSlip} 
+                    className="btn-primary" 
+                    disabled={!paymentSlip || isUploading}
+                    style={{ whiteSpace: 'nowrap' }}
+                  >
+                    {isUploading ? 'กำลังส่ง...' : <><Upload size={18} /> แจ้งโอนเงิน</>}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="tracking-items">
             <h3>รายการสั่งซื้อ</h3>
             {order.items.map((item, i) => (
@@ -89,7 +204,7 @@ export default function OrderTrackingPage() {
             ))}
             <div className="tracking-total">
               <span>รวม</span>
-              <span className="price">฿{order.total}</span>
+              <span className="price">{order.status === 'pending_pricing' ? 'รอประเมิน' : `฿${order.total}`}</span>
             </div>
           </div>
         </div>

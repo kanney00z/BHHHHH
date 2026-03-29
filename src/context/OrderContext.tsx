@@ -102,15 +102,21 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     fetchOrders();
 
+    const channelName = `orders-channel-${Math.random().toString(36).substring(7)}`;
     const channel = supabase
-      .channel('public:orders')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, () => {
+      .channel(channelName)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
+        console.log('Orders realtime trigger', payload);
         fetchOrders();
       })
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'order_items' }, () => {
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'order_items' }, (payload) => {
+        console.log('Order Items realtime trigger', payload);
         fetchOrders();
       })
-      .subscribe();
+      .subscribe((status, err) => {
+        if (err) console.error('Realtime error:', err);
+        console.log('Orders channel status:', status);
+      });
 
     return () => {
       supabase.removeChannel(channel);
@@ -132,6 +138,10 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
 
     const queueNumber = (count || 0) + 1;
 
+    // Check if there are any Custom orders
+    const hasCustomItems = items.some(i => i.menuItem.id.startsWith('custom-') || i.isCustomItem);
+    const initialStatus = hasCustomItems ? 'pending_pricing' : 'pending';
+
     // 1. Insert Order
     const { error: orderError } = await supabase.from('orders').insert({
       id: orderId,
@@ -140,7 +150,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       address: customer.address || null,
       paymentMethod: customer.paymentMethod,
       payment_slip_url: customer.paymentSlipUrl || null,
-      status: 'pending',
+      status: initialStatus,
       subtotal,
       deliveryFee: deliveryFee, // Old column requiring NOT NULL
       delivery_fee: deliveryFee, // New column added recently
@@ -155,15 +165,18 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
     if (orderError) throw orderError;
 
     // 2. Insert Order Items
-    const orderItemsData = items.map(item => ({
-      order_id: orderId,
-      menu_item_id: item.menuItem.id,
-      quantity: item.quantity,
-      price_at_time: item.menuItem.price,
-      custom_name: null,
-      selected_options: item.selectedOptions || [],
-      note: item.note || null,
-    }));
+    const orderItemsData = items.map(item => {
+      const isCustom = item.menuItem.id.startsWith('custom-') || item.isCustomItem;
+      return {
+        order_id: orderId,
+        menu_item_id: isCustom ? null : item.menuItem.id,
+        quantity: item.quantity,
+        price_at_time: isCustom ? 0 : item.menuItem.price,
+        custom_name: isCustom ? item.menuItem.name : (item.customName || null),
+        selected_options: item.selectedOptions || [],
+        note: item.note || null,
+      };
+    });
 
     const { error: itemsError } = await supabase.from('order_items').insert(orderItemsData);
     if (itemsError) throw itemsError;
@@ -177,7 +190,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       items,
       total,
       deliveryFee,
-      status: 'pending',
+      status: initialStatus,
       orderType: customer.orderType,
       pickupTime: customer.pickupTime,
       customerName: customer.name,
@@ -202,13 +215,22 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   }, [fetchOrders]);
 
   const updateOrderStatus = useCallback(async (orderId: string, status: OrderStatus) => {
+    const currentOrder = orders.find(o => o.id === orderId);
+    if (currentOrder && status === 'awaiting_payment') {
+      const orderToNotify = { ...currentOrder, status, updatedAt: new Date().toISOString() };
+      supabase.functions.invoke('line-notify', {
+        body: orderToNotify
+      }).catch(err => console.error('Failed to trigger LINE Notify for awaiting_payment:', err));
+    }
+
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status, updatedAt: new Date().toISOString() } : o));
+
     const { error } = await supabase
       .from('orders')
       .update({ status, updated_at: new Date().toISOString() })
       .eq('id', orderId);
     if (error) fetchOrders();
-  }, [fetchOrders]);
+  }, [fetchOrders, orders]);
 
   const updateOrderDetails = useCallback(async (
     orderId: string, 

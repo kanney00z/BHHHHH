@@ -4,7 +4,7 @@ import { getFromStorage, saveToStorage } from '../utils/localStorage';
 
 interface CartContextType {
   items: CartItem[];
-  addItem: (item: MenuItem, selectedOptions?: any[], note?: string) => void;
+  addItem: (item: MenuItem, selectedOptions?: any[], note?: string, isCustomItem?: boolean) => void;
   removeItem: (cartItemId: string) => void;
   updateQuantity: (cartItemId: string, quantity: number) => void;
   clearCart: () => void;
@@ -21,7 +21,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     saveToStorage('cart', items);
   }, [items]);
 
-  const addItem = useCallback((menuItem: MenuItem, selectedOptions: any[] = [], note: string = '') => {
+  const addItem = useCallback((menuItem: MenuItem, selectedOptions: any[] = [], note: string = '', isCustomItem: boolean = false) => {
     setItems(prev => {
       // Find if an identical item (same menu ID, same options, and same note) exists
       const existing = prev.find(i => 
@@ -33,7 +33,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       if (existing) {
         return prev.map(i => i.cartItemId === existing.cartItemId ? { ...i, quantity: i.quantity + 1 } : i);
       }
-      return [...prev, { cartItemId: `cart-${Date.now()}-${Math.random()}`, menuItem, quantity: 1, selectedOptions, note }];
+      return [...prev, { cartItemId: `cart-${Date.now()}-${Math.random()}`, menuItem, quantity: 1, selectedOptions, note, isCustomItem }];
     });
   }, []);
 

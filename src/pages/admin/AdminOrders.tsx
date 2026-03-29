@@ -6,6 +6,8 @@ import Modal from '../../components/Modal';
 import { Trash2, Edit2, Plus, Minus, Receipt } from 'lucide-react';
 
 const statusLabel: Record<string, string> = {
+  pending_pricing: 'รอประเมินราคา',
+  awaiting_payment: 'รอชำระเงิน',
   pending: 'รอยืนยัน',
   confirmed: 'ยืนยันแล้ว',
   preparing: 'กำลังเตรียม',
@@ -20,7 +22,7 @@ const orderTypeLabel: Record<string, string> = {
   takeaway: '🛍️ รับกลับบ้าน'
 };
 
-const allStatuses = ['all', 'pending', 'confirmed', 'preparing', 'delivering', 'delivered', 'cancelled'];
+const allStatuses = ['all', 'pending_pricing', 'awaiting_payment', 'pending', 'confirmed', 'preparing', 'delivering', 'delivered', 'cancelled'];
 const statusFilterLabel: Record<string, string> = {
   all: 'ทั้งหมด',
   ...statusLabel,
@@ -144,6 +146,11 @@ export default function AdminOrders() {
                     <td data-label="หมายเลข (คิว)" style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
                       #{order.id.slice(-6)}
                       {order.queueNumber && <span style={{display: 'block', fontSize: '0.8rem', color: 'var(--accent)'}}>(คิวที่ {order.queueNumber})</span>}
+                      {order.status === 'pending_pricing' && (
+                        <span style={{ display: 'inline-block', marginTop: 4, padding: '2px 6px', background: 'var(--warning)', color: '#000', fontSize: '0.7rem', borderRadius: 4, fontWeight: 'bold' }}>
+                          ⚠️ ต้องประเมินราคา
+                        </span>
+                      )}
                     </td>
                     <td data-label="ลูกค้า">
                       <div>{order.customerName}</div>
