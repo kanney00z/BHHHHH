@@ -106,14 +106,23 @@ export default function AdminPromotions() {
   };
 
   const toggleActive = async (id: string, current: boolean) => {
-    await supabase.from('promotions').update({ is_active: !current }).eq('id', id);
+    const { error } = await supabase.from('promotions').update({ is_active: !current }).eq('id', id);
+    if (error) {
+      console.error(error);
+      alert('ไม่สามารถเปลี่ยนสถานะได้: ' + error.message);
+    }
     fetchPromotions();
   };
 
   const handleDelete = async (id: string) => {
-    if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบรหัสส่วนลดนี้?')) {
-      await supabase.from('promotions').delete().eq('id', id);
-      fetchPromotions();
+    if (window.confirm('คุณแน่ใจหรือไม่ว่าต้องการลบรหัสส่วนลดนี้?')) {
+      const { error } = await supabase.from('promotions').delete().eq('id', id);
+      if (error) {
+        console.error('Delete error:', error);
+        alert('ไม่สามารถลบได้ กรุณาตรวจสอบสิทธิ์ (RLS): ' + error.message);
+      } else {
+        fetchPromotions();
+      }
     }
   };
 
