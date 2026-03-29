@@ -572,10 +572,12 @@ img {
 .cart-drawer {
   position: fixed;
   top: 0;
+  bottom: 0;
   right: -420px;
   width: 400px;
   max-width: 90vw;
-  height: 100vh;
+  height: 100%;
+  height: 100dvh;
   background: rgba(18, 18, 18, 0.7);
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
@@ -726,7 +728,7 @@ img {
 }
 
 .cart-drawer-footer {
-  padding: 20px 24px;
+  padding: 20px 24px calc(20px + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--bg-glass-border);
   background: var(--bg-card);
 }
@@ -1394,6 +1396,7 @@ img {
   width: 90%;
   max-width: 560px;
   max-height: 85vh;
+  max-height: 85dvh;
   overflow-y: auto;
   animation: scaleIn 0.25s ease;
 }
