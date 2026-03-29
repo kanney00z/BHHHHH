@@ -23,10 +23,6 @@ export default function AdminPromotions() {
   const [expiresAt, setExpiresAt] = useState('');
   const [isActive, setIsActive] = useState(true);
 
-  useEffect(() => {
-    fetchPromotions();
-  }, []);
-
   const fetchPromotions = async () => {
     setLoading(true);
     const { data, error } = await supabase
@@ -41,6 +37,12 @@ export default function AdminPromotions() {
     }
     setLoading(false);
   };
+
+  useEffect(() => {
+    fetchPromotions();
+  }, []);
+
+
 
   const resetForm = () => {
     setCode('');

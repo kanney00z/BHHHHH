@@ -14,6 +14,16 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<StoreSettings | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const fetchSettings = async () => {
+    const { data, error } = await supabase.from('settings').select('*').eq('id', 1).single();
+    if (error) {
+      console.error('Error fetching settings:', error);
+    } else {
+      setSettings(data);
+    }
+    setLoading(false);
+  };
+
   useEffect(() => {
     fetchSettings();
 
@@ -39,15 +49,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     }
   }, [settings?.restaurant_name]);
 
-  const fetchSettings = async () => {
-    const { data, error } = await supabase.from('settings').select('*').eq('id', 1).single();
-    if (error) {
-      console.error('Error fetching settings:', error);
-    } else {
-      setSettings(data);
-    }
-    setLoading(false);
-  };
+
 
   const updateSettings = async (updates: Partial<StoreSettings>) => {
     const { error } = await supabase.from('settings').update(updates).eq('id', 1);

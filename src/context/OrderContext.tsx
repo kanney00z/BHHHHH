@@ -251,17 +251,21 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       // since dealing with UPSERT without a dedicated PK per item is tricky
       await supabase.from('order_items').delete().eq('order_id', orderId);
       
-      const newItems = itemsUpdates.map(item => ({
-        order_id: orderId,
-        menu_item_id: item.menu_item_id,
-        quantity: item.quantity,
-        price_at_time: item.price_at_time,
-        custom_name: item.custom_name || null,
-        selected_options: item.selected_options || [],
-        note: item.note || null,
-      }));
+      const newItems = itemsUpdates.map(item => {
+        const isCustom = !item.menu_item_id || item.menu_item_id?.startsWith('custom-') || item.menu_item_id === 'unknown';
+        return {
+          order_id: orderId,
+          menu_item_id: isCustom ? null : item.menu_item_id,
+          quantity: item.quantity,
+          price_at_time: item.price_at_time,
+          custom_name: item.custom_name || null,
+          selected_options: item.selected_options || [],
+          note: item.note || null,
+        };
+      });
       
-      await supabase.from('order_items').insert(newItems);
+      const { error: insertErr } = await supabase.from('order_items').insert(newItems);
+      if (insertErr) console.error("Error inserting updated items:", insertErr);
     }
 
     fetchOrders();

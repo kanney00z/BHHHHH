@@ -15,12 +15,20 @@ Deno.serve(async (req: Request) => {
   try {
     const order = await req.json();
     
+    // Check if order contains a custom item
+    const hasCustomItem = order.items && Array.isArray(order.items) && 
+      order.items.some((i: any) => (i.customName || i.menuItem?.name || '').includes('เมนูสั่งตามใจ') || i.isCustomItem);
+    
+    const isAwaitingPayment = order.status === 'awaiting_payment';
+    
     // Construct items array for Flex Message
     const itemsBoxArray: any[] = [];
     if (order.items && Array.isArray(order.items)) {
       order.items.forEach((item: any) => {
         const optionTotal = (item.selectedOptions || []).reduce((sum: number, opt: any) => sum + (opt.price || 0), 0);
         const unitPrice = (item.menuItem?.price || 0) + optionTotal;
+        const itemName = item.customName || item.menuItem?.name || 'Unknown';
+        const isThisItemCustom = itemName.includes('เมนูสั่งตามใจ') || item.isCustomItem;
 
         itemsBoxArray.push({
           "type": "box",
@@ -36,9 +44,10 @@ Deno.serve(async (req: Request) => {
             },
             {
               "type": "text",
-              "text": item.customName || item.menuItem?.name || 'Unknown',
+              "text": isThisItemCustom ? `✨ ${itemName}` : itemName,
               "size": "sm",
-              "color": "#333333",
+              "color": isThisItemCustom ? "#9333ea" : "#333333",
+              "weight": isThisItemCustom ? "bold" : "regular",
               "wrap": true,
               "flex": 4
             },
@@ -78,15 +87,17 @@ Deno.serve(async (req: Request) => {
           itemsBoxArray.push({
             "type": "box",
             "layout": "horizontal",
+            "paddingBottom": "4px",
             "contents": [
               {
                 "type": "text",
-                "text": "📝 หมายเหตุ: " + item.note,
+                "text": "📝 " + item.note,
                 "size": "xs",
-                "color": "#e11d48", // red
+                "color": "#ef4444",
                 "wrap": true,
                 "flex": 4,
-                "offsetStart": "xl"
+                "offsetStart": "xl",
+                "style": "italic"
               }
             ]
           });
@@ -96,7 +107,7 @@ Deno.serve(async (req: Request) => {
 
     if (itemsBoxArray.length === 0) {
       itemsBoxArray.push({
-         "type": "text", "text": "-", "size": "sm"
+         "type": "text", "text": "ไม่มีรายการอาหาร", "size": "sm", "color": "#888888"
       });
     }
 
@@ -119,100 +130,111 @@ Deno.serve(async (req: Request) => {
     const bodyContents: any[] = [
       {
         "type": "box",
-        "layout": "horizontal",
-        "contents": [
-          { "type": "text", "text": "คิวที่ (Queue)", "color": "#aaaaaa", "size": "sm" },
-          { "type": "text", "text": String(order.queueNumber || '-'), "color": "#ff6b35", "size": "md", "align": "end", "weight": "bold" }
-        ]
-      },
-      {
-        "type": "box",
-        "layout": "horizontal",
+        "layout": "vertical",
         "margin": "md",
+        "spacing": "sm",
         "contents": [
-          { "type": "text", "text": "ลูกค้า", "color": "#aaaaaa", "size": "sm" },
-          { "type": "text", "text": order.customerName || 'ไม่ระบุ', "color": "#111111", "size": "sm", "align": "end", "weight": "bold", "wrap": true }
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              { "type": "text", "text": "คิวที่ (Queue)", "color": "#888888", "size": "sm", "flex": 2 },
+              { "type": "text", "text": String(order.queueNumber || '-'), "color": "#FF2D55", "size": "md", "align": "end", "weight": "bold", "flex": 3 }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              { "type": "text", "text": "ลูกค้า", "color": "#888888", "size": "sm", "flex": 2 },
+              { "type": "text", "text": order.customerName || 'ไม่ระบุ', "color": "#111111", "size": "sm", "align": "end", "weight": "bold", "wrap": true, "flex": 3 }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              { "type": "text", "text": "เบอร์โทร", "color": "#888888", "size": "sm", "flex": 2 },
+              { "type": "text", "text": order.customerPhone || 'ไม่ระบุ', "color": "#111111", "size": "sm", "align": "end", "weight": "bold", "wrap": true, "flex": 3 }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              { "type": "text", "text": "ประเภท", "color": "#888888", "size": "sm", "flex": 2 },
+              { "type": "text", "text": orderTypeStr + timeStr, "color": "#2563eb", "size": "sm", "align": "end", "weight": "bold", "wrap": true, "flex": 3 }
+            ]
+          },
+          {
+            "type": "box",
+            "layout": "horizontal",
+            "contents": [
+              { "type": "text", "text": "ชำระเงิน", "color": "#888888", "size": "sm", "flex": 2 },
+              { "type": "text", "text": order.paymentMethod === 'promptpay' ? '✅ โอนเงิน (พร้อมเพย์)' : '💵 เงินสด', "color": order.paymentMethod === 'promptpay' ? "#10b981" : "#f59e0b", "size": "sm", "align": "end", "weight": "bold", "flex": 3 }
+            ]
+          }
         ]
       },
-      {
-        "type": "box",
-        "layout": "horizontal",
-        "margin": "md",
-        "contents": [
-          { "type": "text", "text": "เบอร์โทร", "color": "#aaaaaa", "size": "sm", "flex": 1 },
-          { "type": "text", "text": order.customerPhone || 'ไม่ระบุ', "color": "#111111", "size": "sm", "align": "end", "weight": "bold", "wrap": true, "flex": 3 }
-        ]
-      },
-      {
-        "type": "box",
-        "layout": "horizontal",
-        "margin": "md",
-        "contents": [
-          { "type": "text", "text": "ที่อยู่", "color": "#aaaaaa", "size": "sm", "flex": 1 },
-          { "type": "text", "text": addressStr || '-', "color": "#3b82f6", "size": "xs", "align": "end", "weight": "bold", "wrap": true, "flex": 3 }
-        ]
-      },
-      {
-        "type": "box",
-        "layout": "horizontal",
-        "margin": "md",
-        "contents": [
-          { "type": "text", "text": "ประเภท", "color": "#aaaaaa", "size": "sm", "flex": 1 },
-          { "type": "text", "text": orderTypeStr + timeStr, "color": "#2563eb", "size": "sm", "align": "end", "weight": "bold", "wrap": true, "flex": 3 }
-        ]
-      },
-      {
-        "type": "box",
-        "layout": "horizontal",
-        "margin": "md",
-        "contents": [
-          { "type": "text", "text": "ชำระเงิน", "color": "#aaaaaa", "size": "sm" },
-          { "type": "text", "text": order.paymentMethod === 'promptpay' ? 'พร้อมเพย์' : 'เงินสด', "color": order.paymentMethod === 'promptpay' ? "#10b981" : "#f59e0b", "size": "sm", "align": "end", "weight": "bold" }
-        ]
-      },
-      { "type": "separator", "margin": "xxl" },
+      { "type": "separator", "margin": "lg", "color": "#E5E5E5" },
       {
         "type": "box",
         "layout": "vertical",
-        "margin": "xxl",
-        "spacing": "md",
+        "margin": "lg",
+        "spacing": "sm",
         "contents": itemsBoxArray
       },
-      { "type": "separator", "margin": "xxl" },
+      { "type": "separator", "margin": "lg", "color": "#E5E5E5" },
       ...(order.delivery_fee && order.delivery_fee > 0 ? [
         {
           "type": "box" as const,
           "layout": "horizontal" as const,
-          "margin": "xxl" as const,
+          "margin": "lg" as const,
           "contents": [
-            { "type": "text" as const, "text": "ค่าสินค้า", "size": "sm" as const, "color": "#aaaaaa" as const },
-            { "type": "text" as const, "text": "฿" + (order.total - order.delivery_fee), "size": "sm" as const, "color": "#555555" as const, "align": "end" as const }
+            { "type": "text" as const, "text": "ค่าอาหาร", "size": "sm" as const, "color": "#888888" as const },
+            { "type": "text" as const, "text": "฿" + (order.total - order.delivery_fee), "size": "sm" as const, "color": "#111111" as const, "align": "end" as const }
           ]
         },
         {
           "type": "box" as const,
           "layout": "horizontal" as const,
-          "margin": "md" as const,
+          "margin": "sm" as const,
           "contents": [
-            { "type": "text" as const, "text": "ค่าจัดส่ง", "size": "sm" as const, "color": "#aaaaaa" as const },
-            { "type": "text" as const, "text": "฿" + order.delivery_fee, "size": "sm" as const, "color": "#555555" as const, "align": "end" as const }
+            { "type": "text" as const, "text": "ค่าจัดส่ง", "size": "sm" as const, "color": "#888888" as const },
+            { "type": "text" as const, "text": "฿" + order.delivery_fee, "size": "sm" as const, "color": "#111111" as const, "align": "end" as const }
           ]
         }
       ] : []),
       {
         "type": "box",
         "layout": "horizontal",
-        "margin": order.delivery_fee && order.delivery_fee > 0 ? "md" : "xxl",
+        "margin": "md",
         "contents": [
-          { "type": "text", "text": "ยอดรวมสุทธิ", "size": "md", "color": "#555555", "weight": "bold" },
-          { "type": "text", "text": "฿" + order.total, "size": "lg", "color": "#ff6b35", "align": "end", "weight": "bold" }
+          { "type": "text", "text": "ยอดรวมสุทธิ", "size": "md", "color": "#111111", "weight": "bold" },
+          { "type": "text", "text": "฿" + order.total, "size": "xl", "color": "#FF2D55", "align": "end", "weight": "bold" }
         ]
       }
     ];
 
+    // Address section if exists (put at the very bottom before slip)
+    if (addressStr) {
+      bodyContents.splice(bodyContents.length - 1, 0, 
+        { "type": "separator", "margin": "lg", "color": "#E5E5E5" },
+        {
+          "type": "box",
+          "layout": "vertical",
+          "margin": "md",
+          "contents": [
+            { "type": "text", "text": "📍 ที่อยู่จัดส่ง", "color": "#888888", "size": "xs", "weight": "bold", "margin": "sm" },
+            { "type": "text", "text": addressStr, "color": "#4b5563", "size": "sm", "wrap": true, "margin": "sm" }
+          ]
+        }
+      );
+    }
+
     // Embed slip image directly inside the receipt if found
     if (order.paymentSlipUrl) {
-      bodyContents.push({ "type": "separator", "margin": "xxl" });
+      bodyContents.push({ "type": "separator", "margin": "lg", "color": "#E5E5E5" });
       bodyContents.push({
         "type": "box",
         "layout": "vertical",
@@ -231,6 +253,20 @@ Deno.serve(async (req: Request) => {
       });
     }
 
+    // Header dynamic color & Text based on status
+    let headerColor = "#FF2D55"; // Default Apple Pink
+    let headerTitle = "🚨 มีออเดอร์ใหม่เข้า!";
+    
+    if (hasCustomItem) {
+      if (isAwaitingPayment) {
+        headerColor = "#10b981"; // Emerald Green for evaluated (success)
+        headerTitle = "💸 ประเมินราคาเสร็จ (สแกนจ่ายได้เลย)";
+      } else {
+        headerColor = "#9333ea"; // Purple for pending evaluation
+        headerTitle = "✨ ออเดอร์สั่งตามใจ (รอประเมินราคา)";
+      }
+    }
+
     // JSON Flex Layout Design
     const flexBubble = {
       "type": "bubble",
@@ -238,23 +274,24 @@ Deno.serve(async (req: Request) => {
       "header": {
         "type": "box",
         "layout": "vertical",
-        "paddingAll": "20px",
-        "backgroundColor": "#ff6b35",
+        "paddingAll": "xl",
+        "backgroundColor": headerColor,
         "contents": [
           {
             "type": "text",
-            "text": "YUMDASH RECEIPT",
+            "text": "YEN TA FO BY P'OH",
             "color": "#ffffff80",
             "weight": "bold",
             "size": "xs"
           },
           {
             "type": "text",
-            "text": "🛎️ ออเดอร์ใหม่!",
+            "text": headerTitle,
             "color": "#ffffff",
             "weight": "bold",
-            "size": "xxl",
-            "margin": "md"
+            "size": "lg",
+            "margin": "md",
+            "wrap": true
           }
         ]
       },
@@ -267,29 +304,30 @@ Deno.serve(async (req: Request) => {
       "footer": {
         "type": "box",
         "layout": "vertical",
-        "paddingAll": "20px",
+        "paddingAll": "lg",
         "spacing": "sm",
+        "backgroundColor": "#FAFAFA",
         "contents": [
           ...(mapUrl ? [{
             "type": "button",
             "style": "secondary",
-            "color": "#e0e7ff",
+            "color": "#E5E5E5",
             "height": "sm",
             "action": {
               "type": "uri",
-              "label": "📍 แผนที่จัดส่ง (ลูกค้า)",
+              "label": "📍 นำทาง (Google Maps)",
               "uri": mapUrl
             }
           }] : []),
           {
             "type": "button",
             "style": "primary",
-            "color": "#111111",
+            "color": "#FF2D55",
             "height": "sm",
             "action": {
               "type": "uri",
               "label": "📝 เปิดหลังบ้านแอดมิน",
-              "uri": "http://localhost:5173/admin/orders"
+              "uri": "https://yentafoo.vercel.app/admin" // Updated to generic production URL for safety
             }
           }
         ]
