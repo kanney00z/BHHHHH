@@ -113,20 +113,20 @@ export default function MapPicker({ position, onChange }: MapPickerProps) {
           alignItems: 'center',
           justifyContent: 'center',
           gap: '8px',
-          padding: '10px 16px',
-          background: 'var(--primary)',
-          color: '#fff',
+          padding: '12px 16px',
+          background: 'var(--accent)',
+          color: '#ffffff',
           border: 'none',
-          borderRadius: '8px',
-          fontWeight: 'bold',
+          borderRadius: '12px',
+          fontWeight: '600',
           cursor: 'pointer',
-          boxShadow: '0 4px 6px rgba(255, 107, 53, 0.3)',
-          transition: 'all 0.2s',
-          fontSize: '0.9rem'
+          boxShadow: 'var(--shadow-glow)',
+          transition: 'all var(--transition-normal)',
+          fontSize: '0.95rem'
         }}
       >
-        <MapPin size={16} /> 
-        {locating ? 'กำลังค้นหาตำแหน่ง...' : '📍 ใช้ตำแหน่งปัจจุบันของฉัน'}
+        <MapPin size={18} /> 
+        {locating ? 'กำลังค้นหาตำแหน่ง...' : 'กดเพื่อใช้ตำแหน่งปัจจุบันของฉัน'}
       </button>
 
       <div style={{ height: '300px', width: '100%', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border)' }}>
@@ -145,7 +145,7 @@ export default function MapPicker({ position, onChange }: MapPickerProps) {
         </MapContainer>
       </div>
       <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-        <MapPin size={12} /> คุณสามารถซูมและ <strong style={{color: 'var(--primary)'}}>ลากหมุด</strong> ไปยังจุดที่ต้องการให้จัดส่งได้เลย
+        <MapPin size={12} /> คุณสามารถซูมและ <strong style={{color: 'var(--accent)'}}>ลากหมุด</strong> ไปยังจุดที่ต้องการให้จัดส่งได้เลย
       </p>
     </div>
   );

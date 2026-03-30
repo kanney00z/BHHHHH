@@ -339,34 +339,66 @@ img {
 .category-tab {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  background: var(--bg-card);
-  border: 1px solid var(--bg-glass-border);
+  gap: 12px;
+  padding: 8px 24px 8px 8px; /* Extra padding on right, tight on left for the orb */
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
   border-radius: 100px;
   color: var(--text-secondary);
-  font-size: 0.95rem;
-  font-weight: 500;
+  font-size: 1rem;
+  font-weight: 600;
   white-space: nowrap;
-  transition: all var(--transition-fast);
+  transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   cursor: pointer;
-  box-shadow: var(--shadow-sm);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.04),
+    inset 0 1px 1px rgba(255, 255, 255, 1);
 }
 
 .category-tab:hover {
-  background: var(--bg-card-hover);
+  background: rgba(255, 255, 255, 0.9);
   color: var(--text-primary);
-  transform: translateY(-1px);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 
+    0 12px 24px rgba(0, 0, 0, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 1);
 }
 
 .category-tab.active {
-  background: var(--text-primary);
-  color: var(--bg-secondary);
-  border-color: var(--text-primary);
+  background: linear-gradient(135deg, var(--primary) 0%, #ff6b35 100%);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 24px rgba(255, 45, 85, 0.3),
+    inset 0 2px 4px rgba(255, 255, 255, 0.3),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .category-tab .cat-icon {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
+  background: #ffffff;
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: 
+    0 4px 10px rgba(0, 0, 0, 0.08),
+    inset 0 -2px 6px rgba(0, 0, 0, 0.05),
+    inset 0 2px 4px rgba(255, 255, 255, 1);
+  transition: all 0.4s ease;
+}
+
+.category-tab.active .cat-icon {
+  background: #ffffff;
+  box-shadow: 
+    0 6px 12px rgba(0, 0, 0, 0.15),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.05);
+  transform: scale(1.05);
 }
 
 /* ========================= FOOD GRID ========================= */

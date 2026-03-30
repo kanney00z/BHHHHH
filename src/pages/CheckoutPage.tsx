@@ -316,7 +316,7 @@ export default function CheckoutPage() {
             {orderType === 'delivery' && (
               <div className="form-group" style={{ marginBottom: 24 }}>
                 <label style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8, color: 'var(--text)' }}>
-                  <MapPin size={16} color="var(--primary)" /> <strong>ตำแหน่งจัดส่งของคุณ</strong>
+                  <MapPin size={16} color="var(--accent)" /> <strong>ตำแหน่งจัดส่งของคุณ</strong>
                 </label>
                 
                 <MapPicker 
