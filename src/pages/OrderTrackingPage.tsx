@@ -196,12 +196,23 @@ export default function OrderTrackingPage() {
 
           <div className="tracking-items">
             <h3>รายการสั่งซื้อ</h3>
-            {order.items.map((item, i) => (
-              <div className="tracking-item" key={`${item.menuItem.id}-${i}`}>
-                <span>{item.customName || item.menuItem.name} x{item.quantity}</span>
-                <span>฿{item.menuItem.price * item.quantity}</span>
-              </div>
-            ))}
+            {order.items.map((item, i) => {
+              const optPrice = (item.selectedOptions || []).reduce((sum, o) => sum + (o.price || 0), 0);
+              const unitPrice = item.menuItem.price + optPrice;
+              return (
+                <div className="tracking-item" key={`${item.menuItem.id}-${i}`} style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+                    <span>{item.customName || item.menuItem.name} x{item.quantity}</span>
+                    <span>฿{unitPrice * item.quantity}</span>
+                  </div>
+                  {item.selectedOptions && item.selectedOptions.length > 0 && (
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', paddingLeft: '8px' }}>
+                      {item.selectedOptions.map(o => `${o.choiceName}${o.price > 0 ? ` (+${o.price})` : ''}`).join(', ')}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
             <div className="tracking-total">
               <span>รวม</span>
               <span className="price">{order.status === 'pending_pricing' ? 'รอประเมิน' : `฿${order.total}`}</span>
