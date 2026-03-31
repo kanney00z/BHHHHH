@@ -1,0 +1,123 @@
+[0m[0m
+[0m[4mC:\Users\Dev\Downloads\IOP\src\components\MenuItemModal.tsx[24m[0m
+[0m  [2m26:5[22m  [31merror[39m  Error: Calling setState synchronously within an effect can trigger cascading renders[0m
+[0m[0m
+[0mEffects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:[0m
+[0m* Update external systems with the latest state from React.[0m
+[0m* Subscribe for updates from some external system, calling setState in a callback function when external state changes.[0m
+[0m[0m
+[0mCalling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).[0m
+[0m[0m
+[0mC:\Users\Dev\Downloads\IOP\src\components\MenuItemModal.tsx:26:5[0m
+[0m  24 |       });[0m
+[0m  25 |     }[0m
+[0m> 26 |     setSelectedOptions(initials);[0m
+[0m     |     ^^^^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect[0m
+[0m  27 |   }, [item]);[0m
+[0m  28 |[0m
+[0m  29 |   const handleOptionToggle = (opt: MenuItemOption, choice: {id: string, name: string, price: number}) => {  [2mreact-hooks/set-state-in-effect[22m[0m
+[0m[0m
+[0m[4mC:\Users\Dev\Downloads\IOP\src\components\MobileBottomNav.tsx[24m[0m
+[0m  [2m14:11[22m  [31merror[39m  'session' is assigned a value but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4mC:\Users\Dev\Downloads\IOP\src\components\Navbar.tsx[24m[0m
+[0m   [2m3:33[22m  [31merror[39m  'Settings' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m27:7[22m   [31merror[39m  Error: Calling setState synchronously within an effect can trigger cascading renders[0m
+[0m[0m
+[0mEffects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:[0m
+[0m* Update external systems with the latest state from React.[0m
+[0m* Subscribe for updates from some external system, calling setState in a callback function when external state changes.[0m
+[0m[0m
+[0mCalling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).[0m
+[0m[0m
+[0mC:\Users\Dev\Downloads\IOP\src\components\Navbar.tsx:27:7[0m
+[0m  25 |     if (showHistory) {[0m
+[0m  26 |       const history = JSON.parse(localStorage.getItem('yumdash_order_history') || '[]');[0m
+[0m> 27 |       setMyOrderIds(history);[0m
+[0m     |       ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect[0m
+[0m  28 |     }[0m
+[0m  29 |   }, [showHistory]);[0m
+[0m  30 |  [2mreact-hooks/set-state-in-effect[22m[0m
+[0m  [2m73:29[22m  [31merror[39m  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4mC:\Users\Dev\Downloads\IOP\src\context\AuthContext.tsx[24m[0m
+[0m  [2m55:17[22m  [31merror[39m  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  [2mreact-refresh/only-export-components[22m[0m
+[0m[0m
+[0m[4mC:\Users\Dev\Downloads\IOP\src\context\CartContext.tsx[24m[0m
+[0m   [2m7:47[22m  [31merror[39m  Unexpected any. Specify a different type                                                                                        [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m24:69[22m  [31merror[39m  Unexpected any. Specify a different type                                                                                        [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m56:81[22m  [31merror[39m  Unexpected any. Specify a different type                                                                                        [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m67:17[22m  [31merror[39m  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  [2mreact-refresh/only-export-components[22m[0m
+[0m[0m
+[0m[4mC:\Users\Dev\Downloads\IOP\src\context\MenuContext.tsx[24m[0m
+[0m   [2m37:72[22m  [31merror[39m  Unexpected any. Specify a different type                                                                                        [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m   [2m99:22[22m  [31merror[39m  Unexpected any. Specify a different type                                                                                        [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m147:17[22m  [31merror[39m  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  [2mreact-refresh/only-export-components[22m[0m
+[0m[0m
+[0m[4mC:\Users\Dev\Downloads\IOP\src\context\OrderContext.tsx[24m[0m
+[0m   [2m23:187[22m  [31merror[39m  Unexpected any. Specify a different type                                                                                        [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m   [2m52:58[22m   [31merror[39m  Unexpected any. Specify a different type                                                                                        [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m   [2m53:51[22m   [31merror[39m  Unexpected any. Specify a different type                                                                                        [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m   [2m85:45[22m   [31merror[39m  Unexpected any. Specify a different type                                                                                        [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m238:126[22m  [31merror[39m  Unexpected any. Specify a different type                                                                                        [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m240:22[22m   [31merror[39m  Unexpected any. Specify a different type                                                                                        [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m  [2m301:17[22m   [31merror[39m  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components  [2mreact-refresh/only-export-components[22m[0m
+[0m[0m
+[0m[4mC:\Users\Dev\Downloads\IOP\src\context\SettingsContext.tsx[24m[0m
+[0m  [2m28:5[22m   [31merror[39m  Error: Calling setState synchronously within an effect can trigger cascading renders[0m
+[0m[0m
+[0mEffects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:[0m
+[0m* Update external systems with the latest state from React.[0m
+[0m* Subscribe for updates from some external system, calling setState in a callback function when external state changes.[0m
+[0m[0m
+[0mCalling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).[0m
+[0m[0m
+[0mC:\Users\Dev\Downloads\IOP\src\context\SettingsContext.tsx:28:5[0m
+[0m  26 |[0m
+[0m  27 |   useEffect(() => {[0m
+[0m> 28 |     fetchSettings();[0m
+[0m     |     ^^^^^^^^^^^^^ Avoid calling setState() directly within an effect[0m
+[0m  29 |[0m
+[0m  30 |     const channelName = `settings-channel-${Math.random().toString(36).substring(7)}`;[0m
+[0m  31 |     const channel = supabase  [2mreact-hooks/set-state-in-effect[22m[0m
+[0m  [2m71:17[22m  [31merror[39m  Fast refresh only works when a file only exports components. Use a new file to share constants or functions between components                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         [2mreact-refresh/only-export-components[22m[0m
+[0m[0m
+[0m[4mC:\Users\Dev\Downloads\IOP\src\pages\CheckoutPage.tsx[24m[0m
+[0m   [2m22:10[22m  [31merror[39m  'address' is assigned a value but never used     [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m22:19[22m  [31merror[39m  'setAddress' is assigned a value but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m52:16[22m  [31merror[39m  'e' is defined but never used                    [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m110:14[22m  [31merror[39m  'e' is defined but never used                    [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m179:15[22m  [31merror[39m  'data' is assigned a value but never used        [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4mC:\Users\Dev\Downloads\IOP\src\pages\HomePage.tsx[24m[0m
+[0m  [2m44:9[22m  [31merror[39m  'handleAddClick' is assigned a value but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[4mC:\Users\Dev\Downloads\IOP\src\pages\admin\AdminOrders.tsx[24m[0m
+[0m   [2m3:30[22m   [31merror[39m  'CartItem' is defined but never used      [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m  [2m39:146[22m  [31merror[39m  Unexpected any. Specify a different type  [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4mC:\Users\Dev\Downloads\IOP\src\pages\admin\AdminPromotions.tsx[24m[0m
+[0m    [2m5:10[22m  [31merror[39m  'Plus' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m   [2m42:5[22m   [31merror[39m  Error: Calling setState synchronously within an effect can trigger cascading renders[0m
+[0m[0m
+[0mEffects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:[0m
+[0m* Update external systems with the latest state from React.[0m
+[0m* Subscribe for updates from some external system, calling setState in a callback function when external state changes.[0m
+[0m[0m
+[0mCalling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).[0m
+[0m[0m
+[0mC:\Users\Dev\Downloads\IOP\src\pages\admin\AdminPromotions.tsx:42:5[0m
+[0m  40 |[0m
+[0m  41 |   useEffect(() => {[0m
+[0m> 42 |     fetchPromotions();[0m
+[0m     |     ^^^^^^^^^^^^^^^ Avoid calling setState() directly within an effect[0m
+[0m  43 |   }, []);[0m
+[0m  44 |[0m
+[0m  45 |  [2mreact-hooks/set-state-in-effect[22m[0m
+[0m  [2m169:97[22m  [31merror[39m  Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             [2m@typescript-eslint/no-explicit-any[22m[0m
+[0m[0m
+[0m[4mC:\Users\Dev\Downloads\IOP\src\pages\admin\AdminSettings.tsx[24m[0m
+[0m  [2m4:31[22m  [31merror[39m  'Truck' is defined but never used  [2m@typescript-eslint/no-unused-vars[22m[0m
+[0m[0m
+[0m[31m[1m✖ 34 problems (34 errors, 0 warnings)[22m[39m[0m
+[0m[31m[1m[22m[39m[0m

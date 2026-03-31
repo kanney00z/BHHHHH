@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, MapPin, Phone, CreditCard, CheckCircle, ArrowRight, Clock, Store, ShoppingBag as BagIcon, Truck } from 'lucide-react';
+import { User, MapPin, Phone, CreditCard, CheckCircle, ArrowRight, Clock, Store, ShoppingBag as BagIcon, Truck, Upload } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useOrders } from '../context/OrderContext';
 import { useSettings } from '../context/SettingsContext';
@@ -391,22 +391,55 @@ export default function CheckoutPage() {
                   
                   <div style={{ marginTop: 24, textAlign: 'left' }}>
                     <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>อัพโหลดสลิปโอนเงิน *</label>
-                    <input 
-                      type="file" 
-                      accept="image/*" 
-                      onChange={e => {
-                        if (e.target.files && e.target.files.length > 0) {
-                          setPaymentSlip(e.target.files[0]);
-                        }
-                      }} 
-                      style={{ 
-                        width: '100%', 
-                        padding: 12, 
-                        background: 'var(--surface)', 
-                        borderRadius: 8,
-                        border: '1px dashed var(--border)'
-                      }}
-                    />
+                    <div style={{ position: 'relative' }}>
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        id="payment-slip-upload"
+                        onChange={e => {
+                          if (e.target.files && e.target.files.length > 0) {
+                            setPaymentSlip(e.target.files[0]);
+                          }
+                        }} 
+                        style={{ display: 'none' }}
+                      />
+                      <label 
+                        htmlFor="payment-slip-upload" 
+                        style={{ 
+                          display: 'flex', 
+                          flexDirection: 'column',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: '32px 16px', 
+                          background: paymentSlip ? 'rgba(76, 175, 80, 0.05)' : 'var(--bg-glass)', 
+                          borderRadius: '16px',
+                          border: paymentSlip ? '2px solid var(--success)' : '2px dashed var(--primary)',
+                          cursor: 'pointer',
+                          transition: 'all 0.3s ease',
+                          gap: '12px'
+                        }}
+                      >
+                        {paymentSlip ? (
+                          <>
+                            <CheckCircle size={40} color="var(--success)" />
+                            <div style={{ textAlign: 'center' }}>
+                              <p style={{ fontWeight: 'bold', color: 'var(--success)', margin: 0 }}>อัพโหลดสำเร็จ: {paymentSlip.name}</p>
+                              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>คลิกเพื่อเปลี่ยนรูปภาพใหม่</p>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div style={{ padding: '16px', background: 'var(--primary)', borderRadius: '50%', color: 'white', display: 'flex', boxShadow: '0 8px 16px rgba(255, 75, 43, 0.3)' }}>
+                              <Upload size={24} />
+                            </div>
+                            <div style={{ textAlign: 'center' }}>
+                              <p style={{ fontWeight: 600, color: 'var(--text-primary)', margin: 0, fontSize: '1.05rem' }}>แตะเพื่อแนบสลิปโอนเงิน</p>
+                              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>รองรับไฟล์ JPG หรือ PNG</p>
+                            </div>
+                          </>
+                        )}
+                      </label>
+                    </div>
                   </div>
                 </div>
               )
