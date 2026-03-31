@@ -8,6 +8,7 @@ export default function AdminSettings() {
   const { settings, updateSettings, loading } = useSettings();
   
   const [restaurantName, setRestaurantName] = useState('');
+  const [contactPhone, setContactPhone] = useState('');
   const [promptpayNumber, setPromptpayNumber] = useState('');
   const [promptpayName, setPromptpayName] = useState('');
   
@@ -36,6 +37,7 @@ export default function AdminSettings() {
   useEffect(() => {
     if (settings) {
       setRestaurantName(settings.restaurant_name || '');
+      setContactPhone(settings.contact_phone || '');
       setPromptpayNumber(settings.promptpay_number || '');
       setPromptpayName(settings.promptpay_name || '');
       setStoreLat(settings.store_lat);
@@ -63,6 +65,7 @@ export default function AdminSettings() {
     try {
       await updateSettings({
         restaurant_name: restaurantName,
+        contact_phone: contactPhone,
         promptpay_number: promptpayNumber,
         promptpay_name: promptpayName,
         store_lat: storeLat,
@@ -127,6 +130,15 @@ export default function AdminSettings() {
                 onChange={e => setRestaurantName(e.target.value)} 
                 required 
                 placeholder="เช่น YumDash"
+              />
+            </div>
+            <div className="form-group">
+              <label>เบอร์ติดต่อร้าน (Contact Phone)</label>
+              <input 
+                type="text" 
+                value={contactPhone} 
+                onChange={e => setContactPhone(e.target.value)} 
+                placeholder="0xx-xxx-xxxx"
               />
             </div>
             

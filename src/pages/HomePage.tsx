@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowRight, Search, Clock } from 'lucide-react';
+import { ArrowRight, Search, Clock, Phone } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useMenu } from '../context/MenuContext';
 import { useSettings } from '../context/SettingsContext';
@@ -106,10 +106,27 @@ export default function HomePage() {
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.3, duration: 0.6 }}
-            >{settings?.hero_subheadline || 'สั่งง่าย อร่อยเร็ว เลือกจากเมนูหลากหลาย จัดส่งฟรีทุกออเดอร์ด้วยระบบที่ล้ำกว่าเดิม'}</motion.p>
+            >
+              {settings?.hero_subheadline || 'สั่งง่าย อร่อยเร็ว เลือกจากเมนูหลากหลาย จัดส่งฟรีทุกออเดอร์ด้วยระบบที่ล้ำกว่าเดิม'}
+            </motion.p>
+            
+            {settings?.contact_phone && (
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.4, duration: 0.6 }}
+                style={{ marginTop: '16px', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px' }}
+              >
+                <a href={`tel:${settings.contact_phone}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--bg-glass)', color: 'var(--text-primary)', padding: '8px 16px', borderRadius: '100px', fontWeight: 'bold', textDecoration: 'none', border: '1px solid var(--border)' }}>
+                  <Phone size={16} color="var(--accent)" /> {settings.contact_phone}
+                </a>
+              </motion.div>
+            )}
+
             <motion.a 
               href="#menu" 
               className="hero-cta"
+              style={{ marginTop: '24px' }}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >

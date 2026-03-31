@@ -7,6 +7,7 @@ export interface Category {
 export interface StoreSettings {
   id: number;
   restaurant_name: string;
+  contact_phone: string;
   promptpay_number: string;
   promptpay_name: string;
   store_lat: number | null;
