@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { User, MapPin, Phone, CreditCard, CheckCircle, ArrowRight, Clock, Store, ShoppingBag as BagIcon, Truck } from 'lucide-react';
 import { useCart } from '../context/CartContext';
@@ -40,7 +40,7 @@ export default function CheckoutPage() {
   const [isVerifyingPromo, setIsVerifyingPromo] = useState(false);
 
   // Auto-fill customer info on load
-  useState(() => {
+  useEffect(() => {
     const savedCustomer = localStorage.getItem('yumdash_customer_profile');
     if (savedCustomer) {
       try {
@@ -53,7 +53,7 @@ export default function CheckoutPage() {
         console.error('Failed to parse saved customer profile');
       }
     }
-  });
+  }, []);
 
   const applyPromoCode = async () => {
     if (!promoCodeInput.trim()) return;
@@ -116,11 +116,13 @@ export default function CheckoutPage() {
 
   let computedDeliveryFee = 0;
   let distanceKm = 0;
-  if (orderType === 'delivery' && mapPosition && settings?.store_lat && settings?.store_lng) {
+  const hasStoreLocation = settings?.store_lat && settings?.store_lat !== 0;
+  
+  if (orderType === 'delivery' && mapPosition && hasStoreLocation) {
     distanceKm = calculateDistance(
-      settings.store_lat, settings.store_lng,
-      mapPosition.lat, mapPosition.lng
-    );
+      Number(settings.store_lat), Number(settings.store_lng),
+      Number(mapPosition.lat), Number(mapPosition.lng)
+    ) || 0;
     
     if (distanceKm <= (settings.free_delivery_km ?? 2)) {
       computedDeliveryFee = settings.base_delivery_fee ?? 15;
@@ -130,21 +132,33 @@ export default function CheckoutPage() {
     }
   }
 
-  const deliveryFee = orderType === 'delivery' ? computedDeliveryFee : 0;
+  const deliveryFee = orderType === 'delivery' ? (isNaN(computedDeliveryFee) ? 0 : computedDeliveryFee) : 0;
   const grandTotal = Math.max(0, totalPrice - discountAmount) + deliveryFee;
   
   const hasCustomItems = items.some(i => i.menuItem.id.startsWith('custom-') || i.isCustomItem);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !phone || items.length === 0) return;
+    if (items.length === 0) return;
+    
+    if (!name.trim()) {
+      alert('กรุณากรอกชื่อผู้สั่ง');
+      return;
+    }
+    
+    if (!phone.trim()) {
+      alert('กรุณากรอกเบอร์โทรติดต่อ');
+      return;
+    }
     
     if (orderType === 'delivery') {
       if (!mapPosition) {
         alert('กรุณาปักหมุดตำแหน่งจัดส่งบนแผนที่');
         return;
       }
-      if (distanceKm > (settings?.max_delivery_km ?? 10)) {
+      
+      const hasStoreLocation = settings?.store_lat && settings?.store_lng;
+      if (hasStoreLocation && distanceKm > (settings?.max_delivery_km ?? 10)) {
         alert(`ขออภัย ตำแหน่งจัดส่งของคุณอยู่นอกพื้นที่ให้บริการ (สูงสุด ${settings?.max_delivery_km ?? 10} กม.)`);
         return;
       }
@@ -306,11 +320,11 @@ export default function CheckoutPage() {
             <h3><User size={18} /> ข้อมูลลูกค้า</h3>
             <div className="form-group">
               <label>ชื่อ-นามสกุล / ชื่อเล่น</label>
-              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="ชื่อผู้สั่ง" required />
+              <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder="ชื่อผู้สั่ง" />
             </div>
             <div className="form-group">
               <label><Phone size={14} style={{ display: 'inline', verticalAlign: 'middle' }} /> เบอร์โทร</label>
-              <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="0xx-xxx-xxxx" required />
+              <input type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="0xx-xxx-xxxx" />
             </div>
             
             {orderType === 'delivery' && (
@@ -392,7 +406,6 @@ export default function CheckoutPage() {
                         borderRadius: 8,
                         border: '1px dashed var(--border)'
                       }}
-                      required={payment === 'promptpay'}
                     />
                   </div>
                 </div>

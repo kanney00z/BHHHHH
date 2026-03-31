@@ -6,6 +6,7 @@ import { useSettings } from '../context/SettingsContext';
 import { supabase } from '../lib/supabase';
 import generatePayload from 'promptpay-qr';
 import { QRCodeCanvas } from 'qrcode.react';
+import DeliveryMap from '../components/DeliveryMap';
 
 export default function OrderTrackingPage() {
   const { orderId } = useParams();
@@ -60,6 +61,23 @@ export default function OrderTrackingPage() {
   const currentIdx = steps.findIndex(s => s.key === virtualStatus) >= 0 
                      ? steps.findIndex(s => s.key === virtualStatus) 
                      : 0;
+
+  let customerLat: number | null = null;
+  let customerLng: number | null = null;
+  if (order.customerAddress) {
+    const match = order.customerAddress.match(/q=([\d.-]+),([\d.-]+)/);
+    if (match) {
+      customerLat = parseFloat(match[1]);
+      customerLng = parseFloat(match[2]);
+    }
+  }
+
+  const showMap = order.orderType === 'delivery' && 
+                  settings?.store_lat && 
+                  settings?.store_lng && 
+                  customerLat && 
+                  customerLng && 
+                  ['confirmed', 'preparing', 'delivering', 'delivered'].includes(order.status);
                      
   const handleUploadSlip = async () => {
     if (!paymentSlip || !orderId) return;
@@ -144,6 +162,23 @@ export default function OrderTrackingPage() {
               );
             })}
           </div>
+
+          {showMap && settings?.store_lat && settings?.store_lng && customerLat && customerLng && (
+            <div style={{ marginTop: 24, marginBottom: 24 }}>
+              <h4 style={{ marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}>
+                <Truck size={18} color="var(--primary)" /> 
+                ติดตามสถานะคนขับ (Live)
+              </h4>
+              <DeliveryMap 
+                storeLat={settings.store_lat} 
+                storeLng={settings.store_lng} 
+                customerLat={customerLat} 
+                customerLng={customerLng} 
+                status={order.status} 
+                updatedAt={order.updatedAt} 
+              />
+            </div>
+          )}
 
           {order.paymentSlipUrl && (
             <div style={{ marginTop: 20, padding: 16, background: 'var(--surface)', borderRadius: 12, border: '1px solid var(--border)', textAlign: 'center' }}>
