@@ -10,6 +10,7 @@ import { QRCodeCanvas } from 'qrcode.react';
 import { OrderType } from '../types';
 import MapPicker from '../components/MapPicker';
 import { calculateDistance } from '../lib/distance';
+import DigitalReceipt from '../components/DigitalReceipt';
 
 export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCart();
@@ -31,6 +32,7 @@ export default function CheckoutPage() {
   const [paymentSlip, setPaymentSlip] = useState<File | null>(null);
   const [paymentSlipPreview, setPaymentSlipPreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [completedOrder, setCompletedOrder] = useState<import('../types').Order | null>(null);
 
   // Promo Code State
   const [promoCodeInput, setPromoCodeInput] = useState('');
@@ -239,6 +241,7 @@ export default function CheckoutPage() {
       localStorage.setItem('yumdash_order_history', JSON.stringify([order.id, ...history]));
       
       setOrderId(order.id);
+      setCompletedOrder(order);
       clearCart();
       setShowConfirm(true);
     } catch (err) {
@@ -550,22 +553,39 @@ export default function CheckoutPage() {
           </button>
         </form>
 
-        {/* Confirmation Overlay */}
-        {showConfirm && (
-          <div className="order-confirmed-overlay">
-            <div className="order-confirmed-card">
-              <div className="confirm-check">
-                <CheckCircle size={40} color="var(--success)" />
-              </div>
-              <h2>สั่งซื้อสำเร็จ! 🎉</h2>
-              <p>ออเดอร์ของคุณถูกยืนยันเรียบร้อย</p>
-              <button className="btn-primary" style={{ marginRight: 10 }} onClick={() => navigate(`/track/${orderId}`)}>
-                ติดตามออเดอร์
+        {/* Confirmation Overlay with Digital Receipt */}
+        {showConfirm && completedOrder && (
+          <div className="order-confirmed-overlay" style={{ 
+            padding: '20px', 
+            overflowY: 'auto', 
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center' 
+          }}>
+            <h2 style={{ color: 'white', textShadow: '0 2px 8px rgba(0,0,0,0.3)', marginBottom: '24px', textAlign: 'center' }}>
+              🎉 สั่งซื้อสำเร็จ!
+            </h2>
+            
+            <DigitalReceipt order={completedOrder} restaurantName={settings?.restaurant_name} />
+            
+            <div style={{ display: 'flex', gap: '12px', marginTop: '24px', flexWrap: 'wrap', justifyContent: 'center', width: '100%', maxWidth: '380px' }}>
+              <button 
+                className="btn-primary" 
+                style={{ flex: 1, minWidth: '150px' }} 
+                onClick={() => navigate(`/track/${orderId}`)}
+              >
+                ดูสถานะออเดอร์
               </button>
-              <button className="btn-secondary" onClick={() => navigate('/')}>
-                กลับหน้าแรก
+              <button 
+                className="btn-secondary" 
+                style={{ flex: 1, minWidth: '150px' }} 
+                onClick={() => navigate('/')}
+              >
+                กลับหน้าหลัก
               </button>
             </div>
+            
+            <div style={{ height: '40px' }}></div> {/* Spacer for scroll bottom */}
           </div>
         )}
       </div>
