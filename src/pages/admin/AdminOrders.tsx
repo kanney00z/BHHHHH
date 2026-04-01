@@ -230,20 +230,34 @@ export default function AdminOrders() {
                       </select>
                     </td>
                     <td data-label="การจัดการ">
-                      <div style={{ display: 'flex', gap: '8px' }}>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                         <button 
-                          className="admin-icon-btn edit" 
                           title="แก้ไขบิล"
                           onClick={() => handleEditClick(order)}
+                          style={{
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            width: '36px', height: '36px', borderRadius: '10px',
+                            background: 'rgba(0, 122, 255, 0.1)', color: '#007AFF',
+                            border: 'none', cursor: 'pointer', transition: 'all 0.2s ease',
+                          }}
+                          onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(0, 122, 255, 0.2)')}
+                          onMouseOut={(e) => (e.currentTarget.style.background = 'rgba(0, 122, 255, 0.1)')}
                         >
-                          <Edit2 size={16} />
+                          <Edit2 size={18} />
                         </button>
                         <button 
-                          className="admin-icon-btn delete" 
                           title="ลบบิล"
                           onClick={() => handleDeleteClick(order.id)}
+                          style={{
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            width: '36px', height: '36px', borderRadius: '10px',
+                            background: 'rgba(255, 59, 48, 0.1)', color: '#FF3B30',
+                            border: 'none', cursor: 'pointer', transition: 'all 0.2s ease',
+                          }}
+                          onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(255, 59, 48, 0.2)')}
+                          onMouseOut={(e) => (e.currentTarget.style.background = 'rgba(255, 59, 48, 0.1)')}
                         >
-                          <Trash2 size={16} />
+                          <Trash2 size={18} />
                         </button>
                       </div>
                     </td>
