@@ -1832,24 +1832,8 @@ img {
     grid-template-columns: 1fr;
   }
 
-  .admin-sidebar {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0;
-    left: -260px;
-    bottom: 0;
-    width: 260px;
-    max-width: 85vw; /* safeguard */
-    z-index: 3000;
-    background: var(--bg-secondary);
-    padding: 24px 16px;
-    transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .admin-sidebar.open {
-    left: 0;
-    box-shadow: 0 0 50px rgba(0,0,0,0.8);
+  .admin-sidebar, .admin-sidebar.open {
+    display: none !important;
   }
 
   .mobile-menu-overlay {

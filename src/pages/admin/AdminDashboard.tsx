@@ -93,9 +93,9 @@ export default function AdminDashboard() {
     <div className="admin-layout">
       <AdminSidebar />
       <div className="admin-main">
-        <div className="admin-header">
+        <div className="admin-header" style={{ flexWrap: 'wrap', gap: '16px' }}>
           <div>
-            <h1>📊 แดชบอร์ด</h1>
+            <h1>แดชบอร์ด</h1>
             <p>ภาพรวมร้านอาหารของคุณ</p>
           </div>
           <button className="btn-primary" onClick={() => setShowQR(true)} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
