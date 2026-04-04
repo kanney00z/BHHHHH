@@ -17,13 +17,7 @@ export default function AdminSidebar() {
 
   return (
     <>
-      {/* Mobile Hamburger Button */}
-      <button 
-        className="mobile-admin-toggle"
-        onClick={() => setIsOpen(true)}
-      >
-        <Menu size={24} />
-      </button>
+      {/* Mobile Hamburger Button intentionally removed; relying exclusively on iOS-style BottomTabBar */}
 
       {/* Mobile Overlay */}
       <div 

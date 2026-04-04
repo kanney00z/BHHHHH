@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ChefHat, ShoppingCart, ReceiptText, Settings } from 'lucide-react';
+import { ChefHat, ShoppingCart, ReceiptText, Settings, LayoutDashboard, UtensilsCrossed } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -93,20 +93,54 @@ export default function MobileBottomNav({ onCartOpen, onReceiptOpen }: MobileBot
         <>
           <Link 
             to="/" 
-            style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textDecoration: 'none', padding: '8px 24px', color: 'var(--text-muted)' }}
+            style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textDecoration: 'none', padding: '8px', color: 'var(--text-muted)' }}
           >
-            <ChefHat size={22} />
-            <span style={{ fontSize: '0.7rem', fontWeight: 500 }}>กลับหน้าร้าน</span>
+            <ChefHat size={20} />
+            <span style={{ fontSize: '0.65rem', fontWeight: 500 }}>หน้าร้าน</span>
           </Link>
+
           <Link 
             to="/admin" 
-            style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textDecoration: 'none', padding: '8px 24px', color: location.pathname === '/admin' ? 'var(--accent)' : 'var(--text-muted)' }}
+            style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textDecoration: 'none', padding: '8px', color: location.pathname === '/admin' ? 'var(--accent)' : 'var(--text-muted)' }}
           >
             {location.pathname === '/admin' && (
               <div style={{ position: 'absolute', inset: 0, background: 'var(--accent-glow)', borderRadius: '100px', zIndex: -1 }} />
             )}
-            <Settings size={22} />
-            <span style={{ fontSize: '0.7rem', fontWeight: location.pathname === '/admin' ? 700 : 500 }}>แดชบอร์ด</span>
+            <LayoutDashboard size={20} />
+            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin' ? 700 : 500 }}>หน้าแรก</span>
+          </Link>
+
+          <Link 
+            to="/admin/orders" 
+            style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textDecoration: 'none', padding: '8px', color: location.pathname === '/admin/orders' ? 'var(--accent)' : 'var(--text-muted)' }}
+          >
+            {location.pathname === '/admin/orders' && (
+              <div style={{ position: 'absolute', inset: 0, background: 'var(--accent-glow)', borderRadius: '100px', zIndex: -1 }} />
+            )}
+            <ShoppingCart size={20} />
+            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/orders' ? 700 : 500 }}>ออเดอร์</span>
+          </Link>
+
+          <Link 
+            to="/admin/menu" 
+            style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textDecoration: 'none', padding: '8px', color: location.pathname === '/admin/menu' ? 'var(--accent)' : 'var(--text-muted)' }}
+          >
+            {location.pathname === '/admin/menu' && (
+              <div style={{ position: 'absolute', inset: 0, background: 'var(--accent-glow)', borderRadius: '100px', zIndex: -1 }} />
+            )}
+            <UtensilsCrossed size={20} />
+            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/menu' ? 700 : 500 }}>เมนู</span>
+          </Link>
+
+          <Link 
+            to="/admin/settings" 
+            style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textDecoration: 'none', padding: '8px', color: location.pathname === '/admin/settings' ? 'var(--accent)' : 'var(--text-muted)' }}
+          >
+            {location.pathname === '/admin/settings' && (
+              <div style={{ position: 'absolute', inset: 0, background: 'var(--accent-glow)', borderRadius: '100px', zIndex: -1 }} />
+            )}
+            <Settings size={20} />
+            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/settings' ? 700 : 500 }}>ตั้งค่า</span>
           </Link>
         </>
       )}
