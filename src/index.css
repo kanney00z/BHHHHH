@@ -560,7 +560,7 @@ img {
   position: fixed;
   inset: 0;
   background: rgba(0, 0, 0, 0.6);
-  z-index: 2000;
+  z-index: 6000;
   opacity: 0;
   visibility: hidden;
   transition: all var(--transition-normal);
@@ -582,7 +582,7 @@ img {
   height: 100dvh;
   background: var(--bg-card);
   box-shadow: -10px 0 40px rgba(0, 0, 0, 0.08);
-  z-index: 2001;
+  z-index: 6001;
   display: flex;
   flex-direction: column;
   transition: right 0.5s cubic-bezier(0.19, 1, 0.22, 1);
@@ -1091,7 +1091,7 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 3000;
+  z-index: 7000;
   animation: fadeIn 0.3s ease;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
