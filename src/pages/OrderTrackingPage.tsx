@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Check, ArrowRight, Clock, ChefHat, Truck, PartyPopper, CreditCard, Upload } from 'lucide-react';
+import { Check, ArrowRight, Clock, ChefHat, Truck, PartyPopper, CreditCard, Upload, CheckCircle } from 'lucide-react';
 import { useOrders } from '../context/OrderContext';
 import { useSettings } from '../context/SettingsContext';
 import { supabase } from '../lib/supabase';
@@ -16,6 +16,7 @@ export default function OrderTrackingPage() {
   const order = orderId ? getOrder(orderId) : undefined;
   
   const [paymentSlip, setPaymentSlip] = useState<File | null>(null);
+  const [paymentSlipPreview, setPaymentSlipPreview] = useState('');
   const [isUploading, setIsUploading] = useState(false);
 
   if (!order) {
@@ -204,27 +205,75 @@ export default function OrderTrackingPage() {
               <p style={{ color: 'var(--text-muted)' }}>พร้อมเพย์: {settings.promptpay_number}</p>
               
               <div style={{ marginTop: 24, textAlign: 'left' }}>
-                <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>อัพโหลดสลิปโอนเงิน *</label>
-                <div style={{ display: 'flex', gap: 12 }}>
-                  <input 
-                    type="file" 
-                    accept="image/*" 
-                    onChange={e => {
-                      if (e.target.files && e.target.files.length > 0) {
-                        setPaymentSlip(e.target.files[0]);
-                      }
-                    }} 
-                    style={{ flex: 1, padding: 12, background: 'var(--surface)', borderRadius: 8, border: '1px dashed var(--border)' }}
-                  />
-                  <button 
-                    onClick={handleUploadSlip} 
-                    className="btn-primary" 
-                    disabled={!paymentSlip || isUploading}
-                    style={{ whiteSpace: 'nowrap' }}
-                  >
-                    {isUploading ? 'กำลังส่ง...' : <><Upload size={18} /> แจ้งโอนเงิน</>}
-                  </button>
-                </div>
+                <label style={{ display: 'block', marginBottom: 12, fontWeight: 600 }}>อัพโหลดสลิปโอนเงิน *</label>
+                
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  id="tracking-payment-slip"
+                  onChange={e => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      const file = e.target.files[0];
+                      setPaymentSlip(file);
+                      if (paymentSlipPreview) URL.revokeObjectURL(paymentSlipPreview);
+                      setPaymentSlipPreview(URL.createObjectURL(file));
+                    }
+                  }} 
+                  style={{ display: 'none' }}
+                />
+                
+                <label 
+                  htmlFor="tracking-payment-slip" 
+                  style={{ 
+                    display: 'flex', 
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: paymentSlipPreview ? '16px' : '32px 16px', 
+                    background: paymentSlipPreview ? 'var(--surface)' : 'var(--bg-glass)', 
+                    borderRadius: '16px',
+                    border: paymentSlipPreview ? '2px solid var(--accent)' : '2px dashed var(--accent)',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    gap: '12px',
+                    overflow: 'hidden',
+                    marginBottom: '16px'
+                  }}
+                >
+                  {paymentSlipPreview ? (
+                    <>
+                      <div style={{ position: 'relative', width: '100%', maxWidth: '200px', borderRadius: '12px', overflow: 'hidden', boxShadow: 'var(--shadow-md)' }}>
+                        <img src={paymentSlipPreview} alt="Payment Slip Preview" style={{ width: '100%', height: 'auto', display: 'block' }} />
+                        <div style={{ position: 'absolute', top: 8, right: 8, background: 'var(--bg-glass)', borderRadius: '50%', padding: 4, display: 'flex' }}>
+                          <CheckCircle size={20} color="var(--success)" />
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <p style={{ fontWeight: 'bold', color: 'var(--text-primary)', margin: 0 }}>แตะรูปภาพเพื่อเปลี่ยนไฟล์ใหม่</p>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>{paymentSlip?.name}</p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div style={{ padding: '16px', background: 'var(--accent)', borderRadius: '50%', color: 'white', display: 'flex', boxShadow: '0 8px 16px var(--accent-glow)' }}>
+                        <Upload size={24} />
+                      </div>
+                      <div style={{ textAlign: 'center' }}>
+                        <p style={{ fontWeight: 600, color: 'var(--text-primary)', margin: 0, fontSize: '1.05rem' }}>แตะเพื่อแนบสลิปโอนเงิน</p>
+                        <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>รองรับไฟล์ JPG หรือ PNG</p>
+                      </div>
+                    </>
+                  )}
+                </label>
+
+                <button 
+                  onClick={handleUploadSlip} 
+                  className="btn-primary" 
+                  disabled={!paymentSlip || isUploading}
+                  style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, padding: '14px' }}
+                >
+                  {isUploading ? 'กำลังส่ง...' : <><CheckCircle size={18} /> แจ้งชำระเงินและยืนยัน</>}
+                </button>
               </div>
             </div>
           )}
