@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowRight, Search, Clock, Phone } from 'lucide-react';
+import { ArrowRight, Search, Clock, Phone, ChefHat, Tag, MapPin, Store, Navigation } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useMenu } from '../context/MenuContext';
 import { useSettings } from '../context/SettingsContext';
@@ -7,7 +7,8 @@ import { MenuItem } from '../types';
 import FoodCard from '../components/FoodCard';
 import MenuItemModal from '../components/MenuItemModal';
 import CustomOrderModal from '../components/CustomOrderModal';
-import { ChefHat } from 'lucide-react';
+import { MagicCard } from '../components/magicui/MagicCard';
+import { Marquee } from '../components/magicui/Marquee';
 
 export default function HomePage() {
   const { menuItems, categories } = useMenu();
@@ -94,7 +95,20 @@ export default function HomePage() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="hero-content">
+          <div className="hero-content" style={{ position: 'relative' }}>
+            {/* Aceternity Style Background Glow */}
+            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '150%', height: '150%', background: 'radial-gradient(circle, rgba(255,45,85,0.08) 0%, rgba(255,45,85,0) 70%)', zIndex: -1, pointerEvents: 'none' }} />
+            
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ type: 'spring', damping: 20, stiffness: 200 }}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', background: 'var(--bg-glass)', padding: '8px 16px', borderRadius: '100px', fontSize: '0.85rem', fontWeight: 600, color: 'var(--accent)', marginBottom: '24px', border: '1px solid var(--border)', boxShadow: 'var(--shadow-sm)' }}
+            >
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent)', boxShadow: '0 0 10px var(--accent)' }}></div>
+              ยกระดับประสบการณ์การกิน
+            </motion.div>
+            
             <motion.h1 
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -135,27 +149,111 @@ export default function HomePage() {
           </div>
         </motion.section>
 
+        {/* Marquee Promotion Bar (Magic UI Premium) */}
+        {settings?.promo_banner_active && settings.promo_banner_text && (
+          <div style={{ padding: '0 20px', maxWidth: '800px', margin: '0 auto 32px' }}>
+            <div style={{
+              background: 'linear-gradient(90deg, rgba(255, 45, 85, 0.08), rgba(255, 149, 0, 0.08))',
+              border: '1px solid rgba(255, 45, 85, 0.2)',
+              borderRadius: '100px',
+              padding: '6px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              boxShadow: '0 4px 16px rgba(255, 45, 85, 0.08)',
+              backdropFilter: 'blur(8px)'
+            }}>
+              <div style={{ 
+                background: 'linear-gradient(135deg, var(--accent), #ff4b2b)', 
+                color: 'white', 
+                borderRadius: '50%', 
+                width: '32px', 
+                height: '32px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center',
+                marginRight: '12px',
+                flexShrink: 0,
+                boxShadow: '0 2px 8px var(--accent-glow)'
+              }}>
+                <Tag size={16} />
+              </div>
+              <Marquee speed={35} className="promo-marquee" items={
+                settings.promo_banner_text.split('|').map((text, index) => (
+                  <span key={index} style={{ display: 'inline-flex', alignItems: 'center', color: 'var(--text-primary)', fontWeight: 600, fontSize: '0.95rem', letterSpacing: '-0.01em' }}>
+                    {text.trim()}
+                    <span style={{ color: 'var(--accent)', opacity: 0.5, margin: '0 16px' }}>•</span>
+                  </span>
+                ))
+              } />
+            </div>
+          </div>
+        )}
+
         {/* Search */}
-        <div className="search-box" id="menu">
-          <Search size={18} className="search-icon" />
-          <input
-            type="text"
-            placeholder="ค้นหาเมนูที่ชอบ..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
+        <div id="menu" style={{ padding: '0 20px 32px', maxWidth: '600px', margin: '0 auto', position: 'relative' }}>
+          <motion.div 
+            className="search-box-magic"
+            whileFocus={{ scale: 1.02 }}
+            style={{ 
+              position: 'relative', 
+              display: 'flex', 
+              alignItems: 'center', 
+              background: 'var(--bg-glass)', 
+              borderRadius: '24px',
+              border: '1px solid var(--border)',
+              padding: '12px 24px',
+              boxShadow: '0 8px 32px rgba(0,0,0,0.04)',
+              transition: 'all 0.3s ease',
+              overflow: 'hidden'
+            }}
+          >
+            <div className="search-glow" style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, transparent, rgba(255,45,85,0.05), transparent)', opacity: 0, transition: 'opacity 0.3s' }} />
+            <Search size={20} color="var(--accent)" style={{ marginRight: '16px' }} />
+            <input
+              type="text"
+              placeholder="ค้นหาเมนูที่ชอบ... (เช่น ต้มยำ, เย็นตาโฟ)"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={{ 
+                flex: 1, 
+                border: 'none', 
+                background: 'transparent', 
+                fontSize: '1.1rem', 
+                color: 'var(--text-primary)', 
+                outline: 'none',
+              }}
+              onFocus={(e) => {
+                e.currentTarget.parentElement!.style.border = '1px solid rgba(255,45,85,0.4)';
+                e.currentTarget.parentElement!.style.boxShadow = '0 8px 32px rgba(255,45,85,0.1)';
+                (e.currentTarget.previousElementSibling as HTMLElement).style.opacity = '1';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.parentElement!.style.border = '1px solid var(--border)';
+                e.currentTarget.parentElement!.style.boxShadow = '0 8px 32px rgba(0,0,0,0.04)';
+                (e.currentTarget.previousElementSibling as HTMLElement).style.opacity = '0';
+              }}
+            />
+          </motion.div>
         </div>
 
         {/* Categories */}
         <section className="categories-section">
           <div style={{ padding: '0 20px 20px', maxWidth: '800px', margin: '0 auto' }}>
-            <button 
-              className="btn-primary" 
-              style={{ width: '100%', padding: '16px', borderRadius: '12px', fontSize: '1.1rem', background: 'linear-gradient(45deg, var(--accent), #ff4b2b)', border: 'none', boxShadow: '0 8px 24px rgba(255,107,107,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+            <MagicCard 
+              glowColor="rgba(255, 45, 85, 0.4)" 
               onClick={() => setIsCustomModalOpen(true)}
+              className="custom-menu-card"
             >
-              <ChefHat size={24} /> สั่งเมนูตามใจฉัน (ให้ร้านประเมินราคา)
-            </button>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                <div style={{ background: 'var(--accent)', color: 'white', padding: '12px', borderRadius: '50%', boxShadow: '0 4px 12px var(--accent-glow)' }}>
+                  <ChefHat size={28} />
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <h3 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--text-primary)', fontWeight: 700 }}>สั่งเมนูตามใจฉัน</h3>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '0.9rem', color: 'var(--text-muted)' }}>ให้ทางร้านอัปเดตราคาให้ตามจริง</p>
+                </div>
+              </div>
+            </MagicCard>
           </div>
 
           <div className="category-tabs">

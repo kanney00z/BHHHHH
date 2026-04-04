@@ -170,14 +170,16 @@ export default function AdminSettings() {
             </h3>
             <div style={{ background: 'var(--surface)', padding: 20, borderRadius: 12, border: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                <input 
-                  type="checkbox" 
-                  id="promoBanner" 
-                  checked={promoBannerActive} 
-                  onChange={e => setPromoBannerActive(e.target.checked)} 
-                  style={{ width: 20, height: 20, accentColor: 'var(--primary)', cursor: 'pointer' }}
-                />
-                <label htmlFor="promoBanner" style={{ fontWeight: 600, cursor: 'pointer', margin: 0 }}>เปิดใช้งานข้อความประกาศด้านบนสุดของเว็บ</label>
+                <label className="toggle-switch">
+                  <input 
+                    type="checkbox" 
+                    id="promoBanner" 
+                    checked={promoBannerActive} 
+                    onChange={e => setPromoBannerActive(e.target.checked)} 
+                  />
+                  <span className="toggle-slider" />
+                </label>
+                <label htmlFor="promoBanner" style={{ fontWeight: 600, cursor: 'pointer', margin: 0, color: 'var(--text-primary)' }}>เปิดใช้งานข้อความประกาศด้านบนสุดของเว็บ</label>
               </div>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: 16 }}>
                 แบนเนอร์จะแสดงแทบสีแดงสดสะดุดตา สำหรับประกาศส่วนลด ฟรีส่ง หรือแจ้งข่าวสำคัญ
@@ -233,14 +235,16 @@ export default function AdminSettings() {
             </h3>
             <div style={{ background: 'var(--surface)', padding: 20, borderRadius: 12, border: '1px solid var(--border)' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
-                <input 
-                  type="checkbox" 
-                  id="autoClose" 
-                  checked={autoCloseEnabled} 
-                  onChange={e => setAutoCloseEnabled(e.target.checked)} 
-                  style={{ width: 20, height: 20, accentColor: 'var(--primary)', cursor: 'pointer' }}
-                />
-                <label htmlFor="autoClose" style={{ fontWeight: 600, cursor: 'pointer', margin: 0 }}>เปิดใช้งานระบบปิดร้านตามเวลา</label>
+                <label className="toggle-switch">
+                  <input 
+                    type="checkbox" 
+                    id="autoClose" 
+                    checked={autoCloseEnabled} 
+                    onChange={e => setAutoCloseEnabled(e.target.checked)} 
+                  />
+                  <span className="toggle-slider" />
+                </label>
+                <label htmlFor="autoClose" style={{ fontWeight: 600, cursor: 'pointer', margin: 0, color: 'var(--text-primary)' }}>เปิดใช้งานระบบปิดร้านตามเวลา</label>
               </div>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: 20 }}>
                 หากเปิดใช้งาน ถ้านอกเวลาทำการ ระบบจะขึ้นป้าย "ร้านปิดแล้ว" และป้องกันไม่ให้ลูกค้ากดสั่งอาหารเด็ดขาด

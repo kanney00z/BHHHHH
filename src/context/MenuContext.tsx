@@ -21,8 +21,8 @@ export function MenuProvider({ children }: { children: React.ReactNode }) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchMenuData = useCallback(async () => {
-    setLoading(true);
+  const fetchMenuData = useCallback(async (silent = false) => {
+    if (!silent) setLoading(true);
     try {
       const [catRes, itemsRes] = await Promise.all([
         supabase.from('categories').select('*').order('created_at', { ascending: true }),
@@ -50,7 +50,7 @@ export function MenuProvider({ children }: { children: React.ReactNode }) {
     } catch (error) {
       console.error('Error fetching menu data:', error);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }, []);
 
@@ -61,10 +61,10 @@ export function MenuProvider({ children }: { children: React.ReactNode }) {
     const channel = supabase
       .channel(channelName)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'menu_items' }, () => {
-        fetchMenuData();
+        fetchMenuData(true);
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'categories' }, () => {
-        fetchMenuData();
+        fetchMenuData(true);
       })
       .subscribe((status, err) => {
         if (err) console.error('Menu Realtime Error', err);
@@ -91,11 +91,14 @@ export function MenuProvider({ children }: { children: React.ReactNode }) {
       options: item.options || [],
     });
     if (!error) {
-      fetchMenuData(); // Reload
+      fetchMenuData(true); // Reload silently
     }
   }, [fetchMenuData]);
 
   const updateMenuItem = useCallback(async (id: string, updates: Partial<MenuItem>) => {
+    // Optimistic UI Update for instant responsiveness
+    setMenuItems(prev => prev.map(item => item.id === id ? { ...item, ...updates } : item));
+
     const dbUpdates: any = {};
     if (updates.name !== undefined) dbUpdates.name = updates.name;
     if (updates.description !== undefined) dbUpdates.description = updates.description;
@@ -107,12 +110,15 @@ export function MenuProvider({ children }: { children: React.ReactNode }) {
     if (updates.options !== undefined) dbUpdates.options = updates.options;
 
     const { error } = await supabase.from('menu_items').update(dbUpdates).eq('id', id);
-    if (!error) fetchMenuData();
+    if (!error) fetchMenuData(true);
   }, [fetchMenuData]);
 
   const deleteMenuItem = useCallback(async (id: string) => {
+    // Optimistic UI Update
+    setMenuItems(prev => prev.filter(item => item.id !== id));
+    
     const { error } = await supabase.from('menu_items').delete().eq('id', id);
-    if (!error) fetchMenuData();
+    if (!error) fetchMenuData(true);
   }, [fetchMenuData]);
 
   const addCategory = useCallback(async (category: Omit<Category, 'id'>) => {
@@ -124,17 +130,23 @@ export function MenuProvider({ children }: { children: React.ReactNode }) {
       icon: category.icon,
       color: '#000000', // Mock
     });
-    if (!error) fetchMenuData();
+    if (!error) fetchMenuData(true);
   }, [fetchMenuData]);
 
   const updateCategory = useCallback(async (id: string, updates: Partial<Category>) => {
+    // Optimistic update
+    setCategories(prev => prev.map(cat => cat.id === id ? { ...cat, ...updates } : cat));
+    
     const { error } = await supabase.from('categories').update(updates).eq('id', id);
-    if (!error) fetchMenuData();
+    if (!error) fetchMenuData(true);
   }, [fetchMenuData]);
 
   const deleteCategory = useCallback(async (id: string) => {
+    // Optimistic update
+    setCategories(prev => prev.filter(cat => cat.id !== id));
+    
     const { error } = await supabase.from('categories').delete().eq('id', id);
-    if (!error) fetchMenuData();
+    if (!error) fetchMenuData(true);
   }, [fetchMenuData]);
 
   return (

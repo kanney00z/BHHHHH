@@ -3,6 +3,7 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { Plus, Check, ImageIcon } from 'lucide-react';
 import { MenuItem } from '../types';
 import { useCart } from '../context/CartContext';
+import { MagicCard } from './magicui/MagicCard';
 
 interface FoodCardProps {
   item: MenuItem;
@@ -63,21 +64,17 @@ export default function FoodCard({ item, onAddClick, disabled = false }: FoodCar
         rotateX,
         rotateY,
         transformStyle: "preserve-3d",
+        display: 'flex', 
+        flexDirection: 'column', 
+        height: '100%', 
+        marginBottom: '16px'
       }}
-      className={`food-card ${disabled ? 'opacity-50 grayscale' : ''}`}
+      className={`food-card-wrapper ${disabled ? 'opacity-50 grayscale' : ''}`}
     >
-      <motion.div 
-        className="glass-glare" 
-        style={{ 
-          opacity: glareOpacity, 
-          background: 'linear-gradient(rgba(255,255,255,0.8), transparent)',
-          position: 'absolute',
-          top: 0, left: 0, right: 0, height: '100%',
-          transform: `translateY(${glareY})`,
-          zIndex: 10,
-          pointerEvents: 'none',
-        }} 
-      />
+      <MagicCard 
+        glowColor="rgba(255, 45, 85, 0.15)"
+        className="food-card-magic-inner"
+      >
       <div className="food-card-image">
         {item.image ? (
           <img src={item.image} alt={item.name} loading="lazy" />
@@ -108,6 +105,7 @@ export default function FoodCard({ item, onAddClick, disabled = false }: FoodCar
           </button>
         </div>
       </div>
+      </MagicCard>
     </motion.div>
   );
 }

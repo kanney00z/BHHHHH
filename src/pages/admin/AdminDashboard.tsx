@@ -134,7 +134,9 @@ export default function AdminDashboard() {
           </TiltStatCard>
         </div>
 
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', fontWeight: 600, marginBottom: 16 }}>ออเดอร์ล่าสุด</h2>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, background: 'linear-gradient(135deg, var(--text-primary), var(--text-muted))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>ออเดอร์ล่าสุด</h2>
+        </div>
         <div className="admin-table-wrapper">
           <table className="admin-table">
             <thead>

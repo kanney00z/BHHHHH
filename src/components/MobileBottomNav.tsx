@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { ChefHat, ShoppingCart, ReceiptText, Settings } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 
@@ -14,43 +15,101 @@ export default function MobileBottomNav({ onCartOpen, onReceiptOpen }: MobileBot
   const { session } = useAuth();
   
   const isAdmin = location.pathname.startsWith('/admin');
+  
+  // Hide bottom nav on checkout and tracking pages to prevent overlapping action buttons
+  if (location.pathname === '/checkout' || location.pathname.startsWith('/track')) {
+    return null;
+  }
 
   return (
-    <div className="mobile-bottom-nav">
+    <motion.div 
+      className="mobile-bottom-nav-container"
+      initial={{ y: 100, opacity: 0, x: '-50%' }}
+      animate={{ y: 0, opacity: 1, x: '-50%' }}
+      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      style={{
+        position: 'fixed',
+        bottom: '24px',
+        left: '50%',
+        width: 'calc(100% - 48px)',
+        maxWidth: '400px',
+        background: 'var(--bg-glass)',
+        backdropFilter: 'blur(32px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+        border: '1px solid rgba(255,255,255,0.2)',
+        borderRadius: '100px',
+        display: 'flex',
+        justifyContent: 'space-around',
+        alignItems: 'center',
+        padding: '8px 12px',
+        boxShadow: '0 20px 40px rgba(0,0,0,0.1), inset 0 1px 1px rgba(255,255,255,0.5)',
+        zIndex: 5000
+      }}
+    >
       {!isAdmin ? (
         <>
-          <Link to="/" className={`tab-item ${location.pathname === '/' ? 'active' : ''}`}>
+          <Link 
+            to="/" 
+            style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textDecoration: 'none', padding: '8px 24px', color: location.pathname === '/' ? 'var(--accent)' : 'var(--text-muted)' }}
+          >
+            {location.pathname === '/' && (
+              <div style={{ position: 'absolute', inset: 0, background: 'var(--accent-glow)', borderRadius: '100px', zIndex: -1 }} />
+            )}
             <ChefHat size={22} />
-            <span>เมนู</span>
+            <span style={{ fontSize: '0.7rem', fontWeight: location.pathname === '/' ? 700 : 500 }}>เมนู</span>
           </Link>
           
-          <button className="tab-item" onClick={onReceiptOpen}>
+          <button 
+            onClick={onReceiptOpen}
+            style={{ position: 'relative', background: 'none', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', padding: '8px 24px', color: 'var(--text-muted)' }}
+          >
             <ReceiptText size={22} />
-            <span>บิลของฉัน</span>
+            <span style={{ fontSize: '0.7rem', fontWeight: 500 }}>บิลของฉัน</span>
           </button>
 
-          <button className="tab-item cart-tab" onClick={onCartOpen}>
-            <div className="icon-wrapper">
+          <button 
+            onClick={onCartOpen}
+            style={{ position: 'relative', background: 'none', border: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', padding: '8px 24px', color: 'var(--text-muted)' }}
+          >
+            <div style={{ position: 'relative' }}>
               <ShoppingCart size={22} />
-              {totalItems > 0 && <span className="tab-badge">{totalItems}</span>}
+              <AnimatePresence>
+                {totalItems > 0 && (
+                  <motion.span 
+                    initial={{ scale: 0 }} 
+                    animate={{ scale: 1 }} 
+                    exit={{ scale: 0 }}
+                    style={{ position: 'absolute', top: '-6px', right: '-12px', background: 'var(--accent)', color: 'white', fontSize: '0.65rem', fontWeight: 'bold', padding: '2px 6px', borderRadius: '100px', border: '2px solid white', zIndex: 10 }}
+                  >
+                    {totalItems}
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </div>
-            <span>ตะกร้า</span>
+            <span style={{ fontSize: '0.7rem', fontWeight: 500 }}>ตะกร้า</span>
           </button>
-          
-
         </>
       ) : (
         <>
-          <Link to="/" className="tab-item">
+          <Link 
+            to="/" 
+            style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textDecoration: 'none', padding: '8px 24px', color: 'var(--text-muted)' }}
+          >
             <ChefHat size={22} />
-            <span>กลับหน้าร้าน</span>
+            <span style={{ fontSize: '0.7rem', fontWeight: 500 }}>กลับหน้าร้าน</span>
           </Link>
-          <Link to="/admin" className={`tab-item ${location.pathname === '/admin' ? 'active' : ''}`}>
+          <Link 
+            to="/admin" 
+            style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textDecoration: 'none', padding: '8px 24px', color: location.pathname === '/admin' ? 'var(--accent)' : 'var(--text-muted)' }}
+          >
+            {location.pathname === '/admin' && (
+              <div style={{ position: 'absolute', inset: 0, background: 'var(--accent-glow)', borderRadius: '100px', zIndex: -1 }} />
+            )}
             <Settings size={22} />
-            <span>แดชบอร์ด</span>
+            <span style={{ fontSize: '0.7rem', fontWeight: location.pathname === '/admin' ? 700 : 500 }}>แดชบอร์ด</span>
           </Link>
         </>
       )}
-    </div>
+    </motion.div>
   );
 }

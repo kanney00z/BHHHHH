@@ -201,9 +201,12 @@ export default function AdminPromotions() {
                 </div>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
-                <input type="checkbox" id="isActive" checked={isActive} onChange={e => setIsActive(e.target.checked)} />
-                <label htmlFor="isActive" style={{ margin: 0 }}>เปبدใช้งานโค้ดนี้</label>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+                <label htmlFor="isActive" style={{ margin: 0, fontWeight: 500, color: 'var(--text-secondary)' }}>เปิดใช้งานโค้ดนี้</label>
+                <label className="toggle-switch">
+                  <input type="checkbox" id="isActive" checked={isActive} onChange={e => setIsActive(e.target.checked)} />
+                  <span className="toggle-slider" />
+                </label>
               </div>
 
               <div style={{ display: 'flex', gap: 12 }}>
