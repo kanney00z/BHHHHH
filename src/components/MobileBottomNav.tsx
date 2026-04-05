@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ChefHat, ShoppingCart, ReceiptText, Settings, LayoutDashboard, UtensilsCrossed } from 'lucide-react';
+import { ChefHat, ShoppingCart, ReceiptText, Settings, LayoutDashboard, UtensilsCrossed, Image } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -130,6 +130,17 @@ export default function MobileBottomNav({ onCartOpen, onReceiptOpen }: MobileBot
             )}
             <UtensilsCrossed size={20} />
             <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/menu' ? 700 : 500 }}>เมนู</span>
+          </Link>
+
+          <Link 
+            to="/admin/banners" 
+            style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textDecoration: 'none', padding: '8px', color: location.pathname === '/admin/banners' ? 'var(--accent)' : 'var(--text-muted)' }}
+          >
+            {location.pathname === '/admin/banners' && (
+              <div style={{ position: 'absolute', inset: 0, background: 'var(--accent-glow)', borderRadius: '100px', zIndex: -1 }} />
+            )}
+            <Image size={20} />
+            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/banners' ? 700 : 500 }}>ตกแต่ง</span>
           </Link>
 
           <Link 
