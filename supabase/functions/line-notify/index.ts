@@ -407,8 +407,8 @@ Deno.serve(async (req: Request) => {
             },
             {
                "type": "box" as const, "layout": "vertical" as const, "paddingAll": "24px" as const, "backgroundColor": "#ffffff" as const, "contents": [
-                  { "type": "text" as const, "text": "ที่อยู่จัดส่ง / Delivery Address", "color": "#8e8e93" as const, "size": "xs" as const, "weight": "bold" as const, "marginBottom": "8px" as const },
-                  { "type": "text" as const, "text": addressStr, "color": "#1d1d1f" as const, "size": "sm" as const, "wrap": true as const }
+                  { "type": "text" as const, "text": "ที่อยู่จัดส่ง / Delivery Address", "color": "#8e8e93" as const, "size": "xs" as const, "weight": "bold" as const },
+                  { "type": "text" as const, "text": addressStr, "color": "#1d1d1f" as const, "size": "sm" as const, "wrap": true as const, "margin": "md" as const }
                ]
             }
           ] : []),
@@ -419,13 +419,14 @@ Deno.serve(async (req: Request) => {
             },
             {
                "type": "box" as const, "layout": "vertical" as const, "paddingAll": "24px" as const, "backgroundColor": "#fafafa" as const, "contents": [
-                  { "type": "text" as const, "text": "หลักฐานการโอนเงิน / Receipt Slip", "color": "#8e8e93" as const, "size": "xs" as const, "weight": "bold" as const, "marginBottom": "16px" as const },
+                  { "type": "text" as const, "text": "หลักฐานการโอนเงิน / Receipt Slip", "color": "#8e8e93" as const, "size": "xs" as const, "weight": "bold" as const },
                   {
                     "type": "image" as const,
                     "url": order.paymentSlipUrl,
                     "size": "full" as const,
                     "aspectMode": "fit" as const,
-                    "aspectRatio": "3:4" as const
+                    "aspectRatio": "3:4" as const,
+                    "margin": "lg" as const
                   }
                ]
             }
