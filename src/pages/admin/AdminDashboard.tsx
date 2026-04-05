@@ -1,6 +1,6 @@
 import { useState, useRef, MouseEvent } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { DollarSign, ShoppingCart, TrendingUp, Users, QrCode } from 'lucide-react';
+import { DollarSign, ShoppingCart, TrendingUp, Users, QrCode, LayoutDashboard } from 'lucide-react';
 import { useOrders } from '../../context/OrderContext';
 import { useMenu } from '../../context/MenuContext';
 import AdminSidebar from '../../components/AdminSidebar';
@@ -117,8 +117,13 @@ export default function AdminDashboard() {
       <div className="admin-main">
         <div className="admin-header" style={{ flexWrap: 'wrap', gap: '16px' }}>
           <div>
-            <h1>แดชบอร์ด</h1>
-            <p>ภาพรวมร้านอาหารของคุณ</p>
+            <h1 style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: 0 }}>
+              <div style={{ background: 'var(--accent-glow)', color: 'var(--accent)', padding: '8px', borderRadius: '12px', display: 'flex' }}>
+                <LayoutDashboard size={28} />
+              </div>
+              แดชบอร์ด
+            </h1>
+            <p style={{ marginTop: '8px', color: 'var(--text-secondary)' }}>ภาพรวมร้านอาหารของคุณ</p>
           </div>
           <button className="btn-primary" onClick={() => setShowQR(true)} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <QrCode size={18} /> สร้าง QR Code ร้าน

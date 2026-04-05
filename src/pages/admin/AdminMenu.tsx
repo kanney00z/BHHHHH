@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Plus, Pencil, Trash2, Upload, ImageIcon, X, Languages } from 'lucide-react';
+import { Plus, Pencil, Trash2, Upload, ImageIcon, X, Languages, UtensilsCrossed } from 'lucide-react';
 import { useMenu } from '../../context/MenuContext';
 import { MenuItem, MenuItemOption } from '../../types';
 import AdminSidebar from '../../components/AdminSidebar';
@@ -135,8 +135,13 @@ export default function AdminMenu() {
       <div className="admin-main">
         <div className="admin-header">
           <div>
-            <h1>🍽️ จัดการเมนู</h1>
-            <p>เพิ่ม แก้ไข ลบเมนูอาหาร</p>
+            <h1 style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: 0 }}>
+              <div style={{ background: 'var(--accent-glow)', color: 'var(--accent)', padding: '8px', borderRadius: '12px', display: 'flex' }}>
+                <UtensilsCrossed size={28} />
+              </div>
+              จัดการเมนู
+            </h1>
+            <p style={{ marginTop: '8px', color: 'var(--text-secondary)' }}>เพิ่ม แก้ไข ลบเมนูอาหาร</p>
           </div>
           <button className="admin-add-btn" onClick={openAdd}>
             <Plus size={18} /> เพิ่มเมนู
@@ -198,7 +203,10 @@ export default function AdminMenu() {
           <div className="modal-overlay" onClick={() => setShowModal(false)}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
-                <h2 style={{ marginBottom: 0 }}>{editId ? '✏️ แก้ไขเมนู' : '➕ เพิ่มเมนูใหม่'}</h2>
+                <h2 style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: 0 }}>
+                  {editId ? <Pencil size={24} color="var(--accent)" /> : <Plus size={24} color="var(--accent)" />}
+                  {editId ? 'แก้ไขเมนู' : 'เพิ่มเมนูใหม่'}
+                </h2>
                 <button 
                   className="btn-secondary" 
                   style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', fontSize: '0.85rem' }}

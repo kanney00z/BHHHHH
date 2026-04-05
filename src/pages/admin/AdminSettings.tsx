@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 import { useSettings } from '../../context/SettingsContext';
 import { useToast } from '../../context/ToastContext';
-import { Save, MapPin, Clock, Truck } from 'lucide-react';
+import { Save, MapPin, Clock, Truck, Settings as SettingsIcon } from 'lucide-react';
 import MapPicker from '../../components/MapPicker';
 
 export default function AdminSettings() {
@@ -116,8 +116,13 @@ export default function AdminSettings() {
       <div className="admin-main">
         <div className="admin-header">
           <div>
-            <h1>⚙️ ตั้งค่าร้าน</h1>
-            <p>แก้ไขข้อมูลพื้นฐานและช่องทางการรับชำระเงินของร้าน</p>
+            <h1 style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: 0 }}>
+              <div style={{ background: 'var(--accent-glow)', color: 'var(--accent)', padding: '8px', borderRadius: '12px', display: 'flex' }}>
+                <SettingsIcon size={28} />
+              </div>
+              ตั้งค่าร้าน
+            </h1>
+            <p style={{ marginTop: '8px', color: 'var(--text-secondary)' }}>แก้ไขข้อมูลพื้นฐานและช่องทางการรับชำระเงินของร้าน</p>
           </div>
         </div>
 

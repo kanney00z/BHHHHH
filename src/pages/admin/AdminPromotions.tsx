@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 import { supabase } from '../../lib/supabase';
 import { Promotion } from '../../types';
-import { Plus, Edit2, Trash2, CheckCircle, XCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2, CheckCircle, XCircle, Ticket } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 import Modal from '../../components/Modal';
 
@@ -147,8 +147,13 @@ export default function AdminPromotions() {
       <div className="admin-main">
         <div className="admin-header">
           <div>
-            <h1>🎟️ โค้ดส่วนลดโปรโมชั่น</h1>
-            <p>จัดการรหัสส่วนลด แจกแคมเปญ เพื่อกระตุ้นยอดขาย</p>
+            <h1 style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: 0 }}>
+              <div style={{ background: 'var(--accent-glow)', color: 'var(--accent)', padding: '8px', borderRadius: '12px', display: 'flex' }}>
+                <Ticket size={28} />
+              </div>
+              โค้ดส่วนลดโปรโมชั่น
+            </h1>
+            <p style={{ marginTop: '8px', color: 'var(--text-secondary)' }}>จัดการรหัสส่วนลด แจกแคมเปญ เพื่อกระตุ้นยอดขาย</p>
           </div>
         </div>
 

@@ -3,7 +3,7 @@ import { useOrders } from '../../context/OrderContext';
 import { Order, OrderStatus, CartItem } from '../../types';
 import AdminSidebar from '../../components/AdminSidebar';
 import Modal from '../../components/Modal';
-import { Trash2, Edit2, Plus, Minus, Receipt, Printer } from 'lucide-react';
+import { Trash2, Edit2, Plus, Minus, Receipt, Printer, ShoppingCart } from 'lucide-react';
 import DigitalReceipt from '../../components/DigitalReceipt';
 
 const statusLabel: Record<string, string> = {
@@ -121,8 +121,13 @@ export default function AdminOrders() {
       <div className="admin-main">
         <div className="admin-header">
           <div>
-            <h1>📋 จัดการออเดอร์</h1>
-            <p>ดู แก้ไข หรือลบออเดอร์ทั้งหมดในระบบ</p>
+            <h1 style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: 0 }}>
+              <div style={{ background: 'var(--accent-glow)', color: 'var(--accent)', padding: '8px', borderRadius: '12px', display: 'flex' }}>
+                <ShoppingCart size={28} />
+              </div>
+              จัดการออเดอร์
+            </h1>
+            <p style={{ marginTop: '8px', color: 'var(--text-secondary)' }}>ดู แก้ไข หรือลบออเดอร์ทั้งหมดในระบบ</p>
           </div>
         </div>
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { Banner } from '../../types';
-import { ImagePlus, Trash2, ArrowUp, ArrowDown, Power, Link as LinkIcon, Loader2, AlertTriangle } from 'lucide-react';
+import { ImagePlus, Trash2, ArrowUp, ArrowDown, Power, Link as LinkIcon, Loader2, AlertTriangle, Image as ImageIcon } from 'lucide-react';
 import { useToast } from '../../context/ToastContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import AdminSidebar from '../AdminSidebar';
@@ -167,10 +167,13 @@ export default function AdminBanners() {
           {/* Header & Upload */}
           <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '16px', background: 'var(--bg-card)', padding: '24px', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--glass-border-hover)' }}>
         <div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', background: 'var(--accent-gradient)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', margin: 0 }}>
-            ตกแต่งหน้าร้าน (Storefront Banners)
-          </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginTop: '4px' }}>จัดการรูปภาพสไลด์บนหน้าแรก เพื่อโปรโมทเมนูหรือโปรโมชั่น</p>
+          <h1 style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: 0 }}>
+            <div style={{ background: 'var(--accent-glow)', color: 'var(--accent)', padding: '8px', borderRadius: '12px', display: 'flex' }}>
+              <ImageIcon size={28} />
+            </div>
+            ตกแต่งหน้าร้าน
+          </h1>
+          <p style={{ marginTop: '8px', color: 'var(--text-secondary)' }}>จัดการรูปภาพสไลด์บนหน้าแรก เพื่อโปรโมทเมนูหรือโปรโมชั่น</p>
         </div>
         
         <div>

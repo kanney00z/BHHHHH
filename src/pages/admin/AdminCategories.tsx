@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Pencil, Trash2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, FolderOpen } from 'lucide-react';
 import { useMenu } from '../../context/MenuContext';
 import AdminSidebar from '../../components/AdminSidebar';
 
@@ -43,8 +43,13 @@ export default function AdminCategories() {
       <div className="admin-main">
         <div className="admin-header">
           <div>
-            <h1>📂 จัดการหมวดหมู่</h1>
-            <p>เพิ่ม แก้ไข ลบหมวดหมู่อาหาร</p>
+            <h1 style={{ display: 'flex', alignItems: 'center', gap: '12px', margin: 0 }}>
+              <div style={{ background: 'var(--accent-glow)', color: 'var(--accent)', padding: '8px', borderRadius: '12px', display: 'flex' }}>
+                <FolderOpen size={28} />
+              </div>
+              จัดการหมวดหมู่
+            </h1>
+            <p style={{ marginTop: '8px', color: 'var(--text-secondary)' }}>เพิ่ม แก้ไข ลบหมวดหมู่อาหาร</p>
           </div>
           <button className="admin-add-btn" onClick={openAdd}>
             <Plus size={18} /> เพิ่มหมวดหมู่
@@ -84,7 +89,10 @@ export default function AdminCategories() {
         {showModal && (
           <div className="modal-overlay" onClick={() => setShowModal(false)}>
             <div className="modal-content" onClick={e => e.stopPropagation()}>
-              <h2>{editId ? '✏️ แก้ไขหมวดหมู่' : '➕ เพิ่มหมวดหมู่ใหม่'}</h2>
+              <h2 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {editId ? <Pencil size={24} color="var(--accent)" /> : <Plus size={24} color="var(--accent)" />}
+                {editId ? 'แก้ไขหมวดหมู่' : 'เพิ่มหมวดหมู่ใหม่'}
+              </h2>
               <div className="form-group">
                 <label>ไอคอน (Emoji)</label>
                 <input value={icon} onChange={e => setIcon(e.target.value)} placeholder="🍔" style={{ fontSize: '1.5rem' }} />
