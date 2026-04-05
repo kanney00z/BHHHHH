@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ChefHat, ShoppingCart, ReceiptText, Settings, LayoutDashboard, UtensilsCrossed, Image } from 'lucide-react';
+import { ChefHat, ShoppingCart, ReceiptText, Settings, LayoutDashboard, UtensilsCrossed, Image, FolderOpen, Ticket } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -22,30 +22,41 @@ export default function MobileBottomNav({ onCartOpen, onReceiptOpen }: MobileBot
   }
 
   return (
-    <motion.div 
-      className="mobile-bottom-nav-container"
-      initial={{ y: 100, opacity: 0, x: '-50%' }}
-      animate={{ y: 0, opacity: 1, x: '-50%' }}
-      transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-      style={{
-        position: 'fixed',
-        bottom: '24px',
-        left: '50%',
-        width: 'calc(100% - 48px)',
-        maxWidth: '400px',
-        background: 'var(--bg-glass)',
-        backdropFilter: 'blur(32px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(32px) saturate(180%)',
-        border: '1px solid rgba(255,255,255,0.2)',
-        borderRadius: '100px',
-        display: 'flex',
-        justifyContent: 'space-around',
-        alignItems: 'center',
-        padding: '8px 12px',
-        boxShadow: '0 20px 40px rgba(0,0,0,0.1), inset 0 1px 1px rgba(255,255,255,0.5)',
-        zIndex: 5000
-      }}
-    >
+    <>
+      <style>
+        {`
+          .mobile-admin-scroll::-webkit-scrollbar {
+            display: none;
+          }
+        `}
+      </style>
+      <motion.div 
+        className={isAdmin ? "mobile-bottom-nav-container mobile-admin-scroll" : "mobile-bottom-nav-container"}
+        initial={{ y: 100, opacity: 0, x: '-50%' }}
+        animate={{ y: 0, opacity: 1, x: '-50%' }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+        style={{
+          position: 'fixed',
+          bottom: '24px',
+          left: '50%',
+          width: 'calc(100% - 48px)',
+          maxWidth: '500px',
+          background: 'var(--bg-glass)',
+          backdropFilter: 'blur(32px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(32px) saturate(180%)',
+          border: '1px solid rgba(255,255,255,0.2)',
+          borderRadius: '100px',
+          display: 'flex',
+          justifyContent: isAdmin ? 'flex-start' : 'space-around',
+          alignItems: 'center',
+          padding: '8px 12px',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.1), inset 0 1px 1px rgba(255,255,255,0.5)',
+          zIndex: 5000,
+          overflowX: isAdmin ? 'auto' : 'visible',
+          gap: isAdmin ? '12px' : '0',
+          scrollbarWidth: 'none' /* Firefox */
+        }}
+      >
       {!isAdmin ? (
         <>
           <Link 
@@ -96,7 +107,7 @@ export default function MobileBottomNav({ onCartOpen, onReceiptOpen }: MobileBot
             style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textDecoration: 'none', padding: '8px', color: 'var(--text-muted)' }}
           >
             <ChefHat size={20} />
-            <span style={{ fontSize: '0.65rem', fontWeight: 500 }}>หน้าร้าน</span>
+            <span style={{ fontSize: '0.65rem', fontWeight: 500, whiteSpace: 'nowrap' }}>หน้าร้าน</span>
           </Link>
 
           <Link 
@@ -107,7 +118,7 @@ export default function MobileBottomNav({ onCartOpen, onReceiptOpen }: MobileBot
               <div style={{ position: 'absolute', inset: 0, background: 'var(--accent-glow)', borderRadius: '100px', zIndex: -1 }} />
             )}
             <LayoutDashboard size={20} />
-            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin' ? 700 : 500 }}>หน้าแรก</span>
+            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin' ? 700 : 500, whiteSpace: 'nowrap' }}>หน้าแรก</span>
           </Link>
 
           <Link 
@@ -118,7 +129,7 @@ export default function MobileBottomNav({ onCartOpen, onReceiptOpen }: MobileBot
               <div style={{ position: 'absolute', inset: 0, background: 'var(--accent-glow)', borderRadius: '100px', zIndex: -1 }} />
             )}
             <ShoppingCart size={20} />
-            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/orders' ? 700 : 500 }}>ออเดอร์</span>
+            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/orders' ? 700 : 500, whiteSpace: 'nowrap' }}>ออเดอร์</span>
           </Link>
 
           <Link 
@@ -129,7 +140,18 @@ export default function MobileBottomNav({ onCartOpen, onReceiptOpen }: MobileBot
               <div style={{ position: 'absolute', inset: 0, background: 'var(--accent-glow)', borderRadius: '100px', zIndex: -1 }} />
             )}
             <UtensilsCrossed size={20} />
-            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/menu' ? 700 : 500 }}>เมนู</span>
+            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/menu' ? 700 : 500, whiteSpace: 'nowrap' }}>เมนู</span>
+          </Link>
+
+          <Link 
+            to="/admin/categories" 
+            style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textDecoration: 'none', padding: '8px', color: location.pathname === '/admin/categories' ? 'var(--accent)' : 'var(--text-muted)' }}
+          >
+            {location.pathname === '/admin/categories' && (
+              <div style={{ position: 'absolute', inset: 0, background: 'var(--accent-glow)', borderRadius: '100px', zIndex: -1 }} />
+            )}
+            <FolderOpen size={20} />
+            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/categories' ? 700 : 500, whiteSpace: 'nowrap' }}>หมวดหมู่</span>
           </Link>
 
           <Link 
@@ -140,7 +162,18 @@ export default function MobileBottomNav({ onCartOpen, onReceiptOpen }: MobileBot
               <div style={{ position: 'absolute', inset: 0, background: 'var(--accent-glow)', borderRadius: '100px', zIndex: -1 }} />
             )}
             <Image size={20} />
-            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/banners' ? 700 : 500 }}>ตกแต่ง</span>
+            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/banners' ? 700 : 500, whiteSpace: 'nowrap' }}>ตกแต่ง</span>
+          </Link>
+
+          <Link 
+            to="/admin/promotions" 
+            style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textDecoration: 'none', padding: '8px', color: location.pathname === '/admin/promotions' ? 'var(--accent)' : 'var(--text-muted)' }}
+          >
+            {location.pathname === '/admin/promotions' && (
+              <div style={{ position: 'absolute', inset: 0, background: 'var(--accent-glow)', borderRadius: '100px', zIndex: -1 }} />
+            )}
+            <Ticket size={20} />
+            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/promotions' ? 700 : 500, whiteSpace: 'nowrap' }}>ส่วนลด</span>
           </Link>
 
           <Link 
@@ -151,10 +184,11 @@ export default function MobileBottomNav({ onCartOpen, onReceiptOpen }: MobileBot
               <div style={{ position: 'absolute', inset: 0, background: 'var(--accent-glow)', borderRadius: '100px', zIndex: -1 }} />
             )}
             <Settings size={20} />
-            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/settings' ? 700 : 500 }}>ตั้งค่า</span>
+            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/settings' ? 700 : 500, whiteSpace: 'nowrap' }}>ตั้งค่า</span>
           </Link>
         </>
       )}
-    </motion.div>
+      </motion.div>
+    </>
   );
 }
