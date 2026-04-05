@@ -81,6 +81,28 @@ export default function AdminDashboard() {
 
   const recentOrders = orders.slice(0, 8);
 
+  // ----- Analytics Data for Last 7 Days -----
+  const last7Days = Array.from({length: 7}).map((_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i)); // Past 7 days to today
+    return d.toISOString().split('T')[0]; // YYYY-MM-DD
+  });
+
+  const salesByDay = last7Days.map(date => {
+    const dayOrders = orders.filter(o => 
+      o.createdAt.startsWith(date) && 
+      (o.status === 'delivered' || o.status === 'delivering' || o.status === 'preparing' || o.status === 'confirmed')
+    );
+    const total = dayOrders.reduce((sum, o) => sum + o.total, 0);
+    return { 
+      label: date.split('-').slice(1).join('/'), // MM/DD
+      total, 
+      count: dayOrders.length 
+    };
+  });
+
+  const maxDailySale = Math.max(...salesByDay.map(s => s.total), 1);
+
   const statusLabel: Record<string, string> = {
     confirmed: 'ยืนยันแล้ว',
     preparing: 'กำลังเตรียม',
@@ -132,6 +154,51 @@ export default function AdminDashboard() {
             <div className="stat-value">{totalItems}</div>
             <div className="stat-label">เมนูทั้งหมด</div>
           </TiltStatCard>
+        </div>
+
+        {/* --- Business Analytics Chart --- */}
+        <div style={{ marginBottom: 40, marginTop: 10, background: 'var(--bg-card)', padding: '24px', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-md)', border: '1px solid var(--glass-border-hover)' }}>
+          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 700, marginBottom: '24px', color: 'var(--text-primary)' }}>
+            ยอดขายย้อนหลัง 7 วัน <span style={{fontSize:'0.9rem', color: 'var(--text-muted)'}}>(ไม่รวมออเดอร์ที่ถูกยกเลิก)</span>
+          </h2>
+          
+          <div style={{ display: 'flex', alignItems: 'flex-end', height: '200px', gap: '8px', paddingTop: '20px' }}>
+            {salesByDay.map((day, idx) => {
+              const heightPct = Math.max((day.total / maxDailySale) * 100, 2); // At least 2% to show the bar
+              return (
+                <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', position: 'relative' }}>
+                  {/* Tooltip-like value */}
+                  <div style={{ 
+                    position: 'absolute', 
+                    top: `calc(${100 - heightPct}% - 24px)`, 
+                    fontSize: '0.75rem', 
+                    fontWeight: 600, 
+                    color: 'var(--accent)', 
+                    opacity: day.total > 0 ? 1 : 0.5 
+                  }}>
+                    ฿{day.total.toLocaleString()}
+                  </div>
+                  
+                  {/* The Bar */}
+                  <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', width: '100%', padding: '0 10%' }}>
+                    <div style={{
+                      width: '100%',
+                      height: `${heightPct}%`,
+                      background: day.total > 0 ? 'var(--accent-gradient)' : 'var(--bg-primary)',
+                      borderRadius: '8px 8px 0 0',
+                      transition: 'height 0.5s cubic-bezier(0.25, 1, 0.5, 1)',
+                      boxShadow: day.total > 0 ? 'var(--shadow-glow)' : 'none'
+                    }}></div>
+                  </div>
+                  
+                  {/* X-axis Label */}
+                  <div style={{ marginTop: '8px', fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                    {day.label}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Check, ArrowRight, Clock, ChefHat, Truck, PartyPopper, CreditCard, Upload, CheckCircle } from 'lucide-react';
 import { useOrders } from '../context/OrderContext';
 import { useSettings } from '../context/SettingsContext';
+import { useToast } from '../context/ToastContext';
 import { supabase } from '../lib/supabase';
 import generatePayload from 'promptpay-qr';
 import { QRCodeCanvas } from 'qrcode.react';
@@ -13,6 +14,7 @@ export default function OrderTrackingPage() {
   const { getOrder, updateOrderStatus } = useOrders();
   const { settings } = useSettings();
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const order = orderId ? getOrder(orderId) : undefined;
   
   const [paymentSlip, setPaymentSlip] = useState<File | null>(null);
@@ -113,10 +115,10 @@ export default function OrderTrackingPage() {
         updateOrderStatus(orderId, 'pending');
       }
       
-      alert('อัปโหลดสลิปสำเร็จ! ร้านกำลังตรวจสอบอีกครั้งครับ');
+      showToast('อัปโหลดสลิปสำเร็จ! ร้านกำลังตรวจสอบอีกครั้งครับ', 'success');
     } catch (e) {
       console.error(e);
-      alert('เกิดข้อผิดพลาดในการอัปโหลด');
+      showToast('เกิดข้อผิดพลาดในการอัปโหลด', 'error');
     } finally {
       setIsUploading(false);
     }

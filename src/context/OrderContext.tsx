@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { Order, OrderStatus, CartItem, MenuItem, OrderType } from '../types';
 import { supabase } from '../lib/supabase';
+import { useToast } from './ToastContext';
 
 interface OrderCustomer {
   name: string;
@@ -30,6 +31,39 @@ const OrderContext = createContext<OrderContextType | null>(null);
 export function OrderProvider({ children }: { children: React.ReactNode }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const { showToast } = useToast();
+
+  const playNotificationSound = useCallback(() => {
+    try {
+      const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContextClass) return;
+      const ctx = new AudioContextClass();
+      
+      const osc1 = ctx.createOscillator();
+      const gain1 = ctx.createGain();
+      osc1.type = 'sine';
+      osc1.frequency.setValueAtTime(1046.50, ctx.currentTime);
+      gain1.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain1.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+      osc1.connect(gain1);
+      gain1.connect(ctx.destination);
+      osc1.start();
+      osc1.stop(ctx.currentTime + 0.1);
+
+      const osc2 = ctx.createOscillator();
+      const gain2 = ctx.createGain();
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(1318.51, ctx.currentTime + 0.1);
+      gain2.gain.setValueAtTime(0.3, ctx.currentTime + 0.1);
+      gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.0);
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.start(ctx.currentTime + 0.1);
+      osc2.stop(ctx.currentTime + 1.1);
+    } catch (e) {
+      console.log('Audio notification blocked or unsupported', e);
+    }
+  }, []);
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -107,6 +141,10 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       .channel(channelName)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'orders' }, (payload) => {
         console.log('Orders realtime trigger', payload);
+        if (payload.eventType === 'INSERT') {
+          playNotificationSound();
+          showToast(`🔔 มีออเดอร์ใหม่เข้า! (คิว #${payload.new.queue_number || 'NA'})`, 'success');
+        }
         fetchOrders();
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'order_items' }, (payload) => {

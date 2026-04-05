@@ -3,6 +3,7 @@ import html2canvas from 'html2canvas';
 import { QRCodeCanvas } from 'qrcode.react';
 import { MapPin, Phone, Download, CheckCircle, Store, Truck, ShoppingBag } from 'lucide-react';
 import { Order } from '../types';
+import { useToast } from '../context/ToastContext';
 
 interface DigitalReceiptProps {
   order: Order;
@@ -12,6 +13,7 @@ interface DigitalReceiptProps {
 export default function DigitalReceipt({ order, restaurantName = 'YumDash' }: DigitalReceiptProps) {
   const receiptRef = useRef<HTMLDivElement>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const { showToast } = useToast();
 
   const saveReceipt = async () => {
     if (!receiptRef.current) return;
@@ -31,9 +33,10 @@ export default function DigitalReceipt({ order, restaurantName = 'YumDash' }: Di
       link.href = image;
       link.download = `yumdash-receipt-${order.id}.png`;
       link.click();
+      showToast('บันทึกใบเสร็จสำเร็จ', 'success');
     } catch (err) {
       console.error('Error saving receipt:', err);
-      alert('เกิดข้อผิดพลาดในการบันทึกใบเสร็จ');
+      showToast('เกิดข้อผิดพลาดในการบันทึกใบเสร็จ', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -61,6 +64,7 @@ export default function DigitalReceipt({ order, restaurantName = 'YumDash' }: Di
       {/* The Printable Area */}
       <div 
         ref={receiptRef}
+        className="receipt-print-zone"
         style={{
           width: '100%',
           maxWidth: '380px',

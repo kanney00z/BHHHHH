@@ -1910,3 +1910,50 @@ img {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* ========================= PRINT STYLES (80mm THERMAL RECEIPT) ========================= */
+@media print {
+  /* Hide practically everything except printable areas */
+  body * {
+    visibility: hidden;
+  }
+  
+  /* Reset background for saving ink */
+  body, html {
+    background: #ffffff !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 80mm;
+  }
+
+  /* Target a specifically designated print container */
+  .receipt-print-zone, .receipt-print-zone * {
+    visibility: visible;
+  }
+
+  /* Force absolute positioning for exact thermal paper fit */
+  .receipt-print-zone {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 80mm !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+  }
+  
+  /* Turn gradients to solid black or remove background/color inversions */
+  .receipt-print-zone * {
+    color: #000000 !important;
+    background: transparent !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Add standard ESC/POS dashed borders */
+  .receipt-print-zone .dashed-divider {
+    border-top: 1px dashed #000000 !important;
+    margin: 8px 0;
+  }
+}

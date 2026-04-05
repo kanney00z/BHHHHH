@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { ToastProvider } from './context/ToastContext';
 import { CartProvider } from './context/CartContext';
 import { OrderProvider } from './context/OrderContext';
 import { MenuProvider } from './context/MenuContext';
@@ -31,31 +32,33 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <SettingsProvider>
-          <MenuProvider>
-            <CartProvider>
-              <OrderProvider>
-                <Navbar onCartOpen={() => setCartOpen(true)} />
-                <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
-                <Routes>
-                  {/* Public Routes */}
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/checkout" element={<CheckoutPage />} />
-                  <Route path="/track/:orderId" element={<OrderTrackingPage />} />
-                  
-                  {/* Admin Routes */}
-                  <Route path="/admin/login" element={<AdminLogin />} />
-                  <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
-                  <Route path="/admin/orders" element={<ProtectedRoute><AdminOrders /></ProtectedRoute>} />
-                  <Route path="/admin/menu" element={<ProtectedRoute><AdminMenu /></ProtectedRoute>} />
-                  <Route path="/admin/categories" element={<ProtectedRoute><AdminCategories /></ProtectedRoute>} />
-                  <Route path="/admin/settings" element={<ProtectedRoute><AdminSettings /></ProtectedRoute>} />
-                  <Route path="/admin/promotions" element={<ProtectedRoute><AdminPromotions /></ProtectedRoute>} />
-                </Routes>
-              </OrderProvider>
-            </CartProvider>
-          </MenuProvider>
-        </SettingsProvider>
+        <ToastProvider>
+          <SettingsProvider>
+            <MenuProvider>
+              <CartProvider>
+                <OrderProvider>
+                  <Navbar onCartOpen={() => setCartOpen(true)} />
+                  <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+                  <Routes>
+                    {/* Public Routes */}
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/checkout" element={<CheckoutPage />} />
+                    <Route path="/track/:orderId" element={<OrderTrackingPage />} />
+                    
+                    {/* Admin Routes */}
+                    <Route path="/admin/login" element={<AdminLogin />} />
+                    <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+                    <Route path="/admin/orders" element={<ProtectedRoute><AdminOrders /></ProtectedRoute>} />
+                    <Route path="/admin/menu" element={<ProtectedRoute><AdminMenu /></ProtectedRoute>} />
+                    <Route path="/admin/categories" element={<ProtectedRoute><AdminCategories /></ProtectedRoute>} />
+                    <Route path="/admin/settings" element={<ProtectedRoute><AdminSettings /></ProtectedRoute>} />
+                    <Route path="/admin/promotions" element={<ProtectedRoute><AdminPromotions /></ProtectedRoute>} />
+                  </Routes>
+                </OrderProvider>
+              </CartProvider>
+            </MenuProvider>
+          </SettingsProvider>
+        </ToastProvider>
       </AuthProvider>
     </BrowserRouter>
   );

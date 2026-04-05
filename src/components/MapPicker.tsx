@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { MapPin } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 // Fix Leaflet's default marker icon issue in React
 const defaultIcon = new L.Icon({
@@ -58,6 +59,7 @@ export default function MapPicker({ position, onChange }: MapPickerProps) {
   const [mapCenter, setMapCenter] = useState(BANGKOK_CENTER);
   const [mapInstance, setMapInstance] = useState<L.Map | null>(null);
   const [locating, setLocating] = useState(false);
+  const { showToast } = useToast();
 
   useEffect(() => {
     // If we have a position set, let's use it as center
@@ -75,7 +77,7 @@ export default function MapPicker({ position, onChange }: MapPickerProps) {
 
   const handleLocateMe = () => {
     if (!navigator.geolocation) {
-      alert('เบราว์เซอร์ของคุณไม่รองรับการดึงตำแหน่งปัจจุบัน');
+      showToast('เบราว์เซอร์ของคุณไม่รองรับการดึงตำแหน่งปัจจุบัน', 'error');
       return;
     }
 

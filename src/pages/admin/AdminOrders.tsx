@@ -3,7 +3,8 @@ import { useOrders } from '../../context/OrderContext';
 import { Order, OrderStatus, CartItem } from '../../types';
 import AdminSidebar from '../../components/AdminSidebar';
 import Modal from '../../components/Modal';
-import { Trash2, Edit2, Plus, Minus, Receipt } from 'lucide-react';
+import { Trash2, Edit2, Plus, Minus, Receipt, Printer } from 'lucide-react';
+import DigitalReceipt from '../../components/DigitalReceipt';
 
 const statusLabel: Record<string, string> = {
   pending_pricing: 'รอประเมินราคา',
@@ -39,6 +40,7 @@ export default function AdminOrders() {
   const [editItems, setEditItems] = useState<{ id: string; menuItemId: string; customName: string; price: number; qty: number; selectedOptions?: any[]; note?: string }[]>([]);
   
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [printingOrder, setPrintingOrder] = useState<Order | null>(null);
 
   const filteredOrders = useMemo(() => {
     if (filter === 'all') return orders;
@@ -103,6 +105,14 @@ export default function AdminOrders() {
       await deleteOrder(confirmDeleteId);
       setConfirmDeleteId(null);
     }
+  };
+
+  const handlePrintReceipt = (order: Order) => {
+    setPrintingOrder(order);
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => setPrintingOrder(null), 1000);
+    }, 150);
   };
 
   return (
@@ -231,6 +241,20 @@ export default function AdminOrders() {
                     </td>
                     <td data-label="การจัดการ">
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <button 
+                          title="พิมพ์ใบเสร็จ (80mm)"
+                          onClick={() => handlePrintReceipt(order)}
+                          style={{
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            width: '36px', height: '36px', borderRadius: '10px',
+                            background: 'rgba(52, 199, 89, 0.1)', color: '#34c759',
+                            border: 'none', cursor: 'pointer', transition: 'all 0.2s ease',
+                          }}
+                          onMouseOver={(e) => (e.currentTarget.style.background = 'rgba(52, 199, 89, 0.2)')}
+                          onMouseOut={(e) => (e.currentTarget.style.background = 'rgba(52, 199, 89, 0.1)')}
+                        >
+                          <Printer size={18} />
+                        </button>
                         <button 
                           title="แก้ไขบิล"
                           onClick={() => handleEditClick(order)}

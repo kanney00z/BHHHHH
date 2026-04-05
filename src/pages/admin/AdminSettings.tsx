@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 import { useSettings } from '../../context/SettingsContext';
+import { useToast } from '../../context/ToastContext';
 import { Save, MapPin, Clock, Truck } from 'lucide-react';
 import MapPicker from '../../components/MapPicker';
 
 export default function AdminSettings() {
   const { settings, updateSettings, loading } = useSettings();
+  const { showToast } = useToast();
   
   const [restaurantName, setRestaurantName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
@@ -83,11 +85,12 @@ export default function AdminSettings() {
         hero_highlight: heroHighlight,
         hero_subheadline: heroSubheadline
       });
+      showToast('บันทึกการตั้งค่าเรียบร้อย!', 'success');
       setSaveSuccess(true);
       setTimeout(() => setSaveSuccess(false), 3000);
     } catch (error) {
       console.error('Failed to save settings', error);
-      alert('เกิดข้อผิดพลาดในการบันทึกข้อมูล');
+      showToast('เกิดข้อผิดพลาดในการบันทึกข้อมูล', 'error');
     } finally {
       setIsSaving(false);
     }

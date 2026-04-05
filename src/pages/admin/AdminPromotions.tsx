@@ -3,11 +3,13 @@ import AdminSidebar from '../../components/AdminSidebar';
 import { supabase } from '../../lib/supabase';
 import { Promotion } from '../../types';
 import { Plus, Edit2, Trash2, CheckCircle, XCircle } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
 import Modal from '../../components/Modal';
 
 export default function AdminPromotions() {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [loading, setLoading] = useState(true);
+  const { showToast } = useToast();
   
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -74,7 +76,7 @@ export default function AdminPromotions() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!code) {
-        alert("กรุณากรอกรหัสส่วนลด");
+        showToast("กรุณากรอกรหัสส่วนลด", 'error');
         return;
     }
     
@@ -93,16 +95,18 @@ export default function AdminPromotions() {
       const { error } = await supabase.from('promotions').update(payload).eq('id', editingId);
       if (error) {
         console.error('Error updating promotion', error);
-        alert(error.message.includes('unique') ? 'รหัสนี้มีอยู่แล้ว' : 'เกิดข้อผิดพลาดในการอัปเดต');
+        showToast(error.message.includes('unique') ? 'รหัสนี้มีอยู่แล้ว' : 'เกิดข้อผิดพลาดในการอัปเดต', 'error');
         return;
       }
+      showToast('อัปเดตสำเร็จ', 'success');
     } else {
       const { error } = await supabase.from('promotions').insert(payload);
       if (error) {
         console.error('Error creating promotion', error);
-        alert(error.message.includes('unique') ? 'รหัสนี้มีอยู่แล้ว' : 'เกิดข้อผิดพลาดในการสร้าง');
+        showToast(error.message.includes('unique') ? 'รหัสนี้มีอยู่แล้ว' : 'เกิดข้อผิดพลาดในการสร้าง', 'error');
         return;
       }
+      showToast('สร้างคูปองสำเร็จ', 'success');
     }
 
     resetForm();
@@ -113,7 +117,9 @@ export default function AdminPromotions() {
     const { error } = await supabase.from('promotions').update({ is_active: !current }).eq('id', id);
     if (error) {
       console.error(error);
-      alert('ไม่สามารถเปลี่ยนสถานะได้: ' + error.message);
+      showToast('ไม่สามารถเปลี่ยนสถานะได้: ' + error.message, 'error');
+    } else {
+      showToast('อัปเดตสถานะสำเร็จ', 'success');
     }
     fetchPromotions();
   };
@@ -128,7 +134,7 @@ export default function AdminPromotions() {
     const { error } = await supabase.from('promotions').delete().eq('id', deleteConfirmId);
     if (error) {
       console.error('Delete error:', error);
-      alert('ไม่สามารถลบได้ (อาจติดสิทธิ์ RLS หรือถูกเรียกใช้งานอยู่): ' + error.message);
+      showToast('ไม่สามารถลบได้ (อาจติดสิทธิ์ RLS หรือถูกเรียกใช้งานอยู่): ' + error.message, 'error');
     } else {
       fetchPromotions();
     }

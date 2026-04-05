@@ -11,11 +11,13 @@ import { OrderType } from '../types';
 import MapPicker from '../components/MapPicker';
 import { calculateDistance } from '../lib/distance';
 import DigitalReceipt from '../components/DigitalReceipt';
+import { useToast } from '../context/ToastContext';
 
 export default function CheckoutPage() {
   const { items, totalPrice, clearCart } = useCart();
   const { addOrder } = useOrders();
   const { settings } = useSettings();
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   const [name, setName] = useState('');
@@ -145,24 +147,24 @@ export default function CheckoutPage() {
     if (items.length === 0) return;
     
     if (!name.trim()) {
-      alert('กรุณากรอกชื่อผู้สั่ง');
+      showToast('กรุณากรอกชื่อผู้สั่ง', 'error');
       return;
     }
     
     if (!phone.trim()) {
-      alert('กรุณากรอกเบอร์โทรติดต่อ');
+      showToast('กรุณากรอกเบอร์โทรติดต่อ', 'error');
       return;
     }
     
     if (orderType === 'delivery') {
       if (!mapPosition) {
-        alert('กรุณาปักหมุดตำแหน่งจัดส่งบนแผนที่');
+        showToast('กรุณาปักหมุดตำแหน่งจัดส่งบนแผนที่', 'error');
         return;
       }
       
       const hasStoreLocation = settings?.store_lat && settings?.store_lng;
       if (hasStoreLocation && distanceKm > (settings?.max_delivery_km ?? 10)) {
-        alert(`ขออภัย ตำแหน่งจัดส่งของคุณอยู่นอกพื้นที่ให้บริการ (สูงสุด ${settings?.max_delivery_km ?? 10} กม.)`);
+        showToast(`ขออภัย ตำแหน่งจัดส่งของคุณอยู่นอกพื้นที่ให้บริการ (สูงสุด ${settings?.max_delivery_km ?? 10} กม.)`, 'error');
         return;
       }
     }
@@ -171,7 +173,7 @@ export default function CheckoutPage() {
 
     if (payment === 'promptpay' && !hasCustomItems) {
       if (!paymentSlip) {
-        alert('กรุณาแนบสลิปโอนเงิน');
+        showToast('กรุณาแนบสลิปโอนเงิน', 'error');
         return;
       }
       
@@ -183,7 +185,7 @@ export default function CheckoutPage() {
       
       if (error) {
         console.error('Error uploading slip:', error);
-        alert('เกิดข้อผิดพลาดในการอัพโหลดสลิป กรุณาลองใหม่');
+        showToast('เกิดข้อผิดพลาดในการอัพโหลดสลิป กรุณาลองใหม่', 'error');
         setIsSubmitting(false);
         return;
       }
@@ -246,7 +248,7 @@ export default function CheckoutPage() {
       setShowConfirm(true);
     } catch (err) {
       console.error('Error submitting order', err);
-      alert('เกิดข้อผิดพลาดในการสร้างออเดอร์ กรุณาลองใหม่');
+      showToast('เกิดข้อผิดพลาดในการสร้างออเดอร์ กรุณาลองใหม่', 'error');
     } finally {
       setIsSubmitting(false);
     }
