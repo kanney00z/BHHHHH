@@ -353,7 +353,7 @@ Deno.serve(async (req: Request) => {
           },
           // Separator line
           {
-            "type": "box", "layout": "vertical", "height": "1px", "backgroundColor": "#e5e5ea", "margin": "none", "contents" : []
+            "type": "separator", "margin": "md", "color": "#e5e5ea"
           },
           // Items section
           {
@@ -362,14 +362,15 @@ Deno.serve(async (req: Request) => {
             "paddingAll": "24px",
             "contents": [
               {
-                "type": "text", "text": "รายการอาหาร / Order Items", "color": "#8e8e93", "size": "xs", "weight": "bold", "margin": "none", "paddingBottom": "16px"
+                "type": "text", "text": "รายการอาหาร / Order Items", "color": "#8e8e93", "size": "xs", "weight": "bold", "margin": "none"
               },
+              { "type": "separator", "margin": "md", "color": "#ffffff" }, // spacing
               ...itemsBoxArray
             ]
           },
           // Separator
           {
-            "type": "box", "layout": "vertical", "height": "1px", "backgroundColor": "#e5e5ea", "margin": "none", "paddingAll": "none", "contents" : []
+            "type": "separator", "margin": "none", "color": "#e5e5ea"
           },
           // Totals Section
           {
@@ -403,7 +404,7 @@ Deno.serve(async (req: Request) => {
           // Address Section
           ...(addressStr ? [
             {
-               "type": "box" as const, "layout": "vertical" as const, "height": "1px" as const, "backgroundColor": "#e5e5ea" as const, "contents": []
+               "type": "separator" as const, "margin": "none" as const, "color": "#e5e5ea" as const
             },
             {
                "type": "box" as const, "layout": "vertical" as const, "paddingAll": "24px" as const, "backgroundColor": "#ffffff" as const, "contents": [
@@ -415,7 +416,7 @@ Deno.serve(async (req: Request) => {
           // Slip Section
           ...(order.paymentSlipUrl ? [
             {
-               "type": "box" as const, "layout": "vertical" as const, "height": "1px" as const, "backgroundColor": "#e5e5ea" as const, "contents": []
+               "type": "separator" as const, "margin": "none" as const, "color": "#e5e5ea" as const
             },
             {
                "type": "box" as const, "layout": "vertical" as const, "paddingAll": "24px" as const, "backgroundColor": "#fafafa" as const, "contents": [
@@ -442,7 +443,6 @@ Deno.serve(async (req: Request) => {
           ...(mapUrl ? [{
             "type": "button",
             "style": "secondary",
-            "color": "#f2f2f7",
             "height": "sm",
             "action": {
               "type": "uri",
