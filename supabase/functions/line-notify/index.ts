@@ -285,8 +285,7 @@ Deno.serve(async (req: Request) => {
             "text": "YUMDASH PRO POS",
             "color": "#ffffff80",
             "weight": "bold",
-            "size": "xxs",
-            "letterSpacing": "2px"
+            "size": "xxs"
           },
           {
             "type": "text",
