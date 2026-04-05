@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowRight, Search, Clock, Phone, ChefHat, Tag, MapPin, Store, Navigation } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useMenu } from '../context/MenuContext';
 import { useSettings } from '../context/SettingsContext';
-import { MenuItem } from '../types';
+import { MenuItem, Banner } from '../types';
 import FoodCard from '../components/FoodCard';
 import MenuItemModal from '../components/MenuItemModal';
 import CustomOrderModal from '../components/CustomOrderModal';
 import { MagicCard } from '../components/magicui/MagicCard';
 import { Marquee } from '../components/magicui/Marquee';
+import BannerCarousel from '../components/BannerCarousel';
+import { supabase } from '../lib/supabase';
 
 export default function HomePage() {
   const { menuItems, categories } = useMenu();
@@ -17,6 +19,38 @@ export default function HomePage() {
   const [search, setSearch] = useState('');
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [isCustomModalOpen, setIsCustomModalOpen] = useState(false);
+  const [banners, setBanners] = useState<Banner[]>([]);
+
+  useEffect(() => {
+    const fetchBanners = async () => {
+      try {
+        const { data } = await supabase
+          .from('banners')
+          .select('*')
+          .eq('is_active', true)
+          .order('sort_order', { ascending: true });
+        if (data) {
+          setBanners(data);
+        }
+      } catch (err) {
+        console.error('Error fetching banners:', err);
+      }
+    };
+    fetchBanners();
+
+    // Subscribe to real-time changes
+    const bannersSubscription = supabase
+      .channel('public:banners:homepage')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'banners' }, () => {
+        // Refetch active banners when table changes (insert, update, delete)
+        fetchBanners();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(bannersSubscription);
+    };
+  }, []);
 
   const checkIsStoreOpen = () => {
     if (!settings?.auto_close_enabled || !settings.opening_time || !settings.closing_time) return true;
@@ -88,6 +122,12 @@ export default function HomePage() {
         </div>
       )}
       <div className="page-container">
+        {banners.length > 0 ? (
+          <div style={{ marginBottom: '24px' }}>
+            <BannerCarousel banners={banners} />
+          </div>
+        ) : null}
+
         {/* Hero */}
         <motion.section 
           className="hero"

@@ -45,6 +45,9 @@ export default function AdminSidebar() {
         <NavLink to="/admin/categories" onClick={closeMenu} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
           <FolderOpen size={18} /> หมวดหมู่
         </NavLink>
+        <NavLink to="/admin/banners" onClick={closeMenu} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
+          <span style={{ fontSize: '1.2rem', marginRight: '8px', lineHeight: 1, display: 'flex' }}>✨</span> ตกแต่งหน้าร้าน
+        </NavLink>
         <div style={{ flex: 1 }} />
         <NavLink to="/admin/promotions" onClick={closeMenu} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
           <span style={{ fontSize: '1.2rem', marginRight: '8px' }}>🎟️</span> โค้ดส่วนลด

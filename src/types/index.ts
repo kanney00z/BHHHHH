@@ -105,3 +105,12 @@ export interface Promotion {
   expires_at: string | null;
   created_at?: string;
 }
+
+export interface Banner {
+  id: string;
+  image_url: string;
+  link_url: string | null;
+  sort_order: number;
+  is_active: boolean;
+  created_at: string;
+}
