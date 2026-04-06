@@ -16,6 +16,17 @@ export default function AdminBanners() {
 
   useEffect(() => {
     fetchBanners();
+
+    const adminBannersSubscription = supabase
+      .channel('public:banners:admin')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'banners' }, () => {
+        fetchBanners();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(adminBannersSubscription);
+    };
   }, []);
 
   const fetchBanners = async () => {
@@ -57,18 +68,23 @@ export default function AdminBanners() {
 
       const maxSortOrder = banners.reduce((max, b) => Math.max(max, b.sort_order), -1);
 
-      const { error: insertError } = await supabase
+      const { data: insertedBanners, error: insertError } = await supabase
         .from('banners')
         .insert([{
           image_url: publicUrl,
           sort_order: maxSortOrder + 1,
           is_active: true
-        }]);
+        }])
+        .select('*');
 
       if (insertError) throw insertError;
 
       showToast('อัปโหลดแบนเนอร์สำเร็จ', 'success');
-      fetchBanners();
+      if (insertedBanners && insertedBanners.length > 0) {
+        setBanners(prev => [...prev, insertedBanners[0]]);
+      } else {
+        fetchBanners();
+      }
     } catch (err: any) {
       showToast(err.message, 'error');
     } finally {
