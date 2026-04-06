@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ArrowRight, Search, Clock, Phone, ChefHat, Tag, MapPin, Store, Navigation } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useMenu } from '../context/MenuContext';
 import { useSettings } from '../context/SettingsContext';
@@ -9,6 +10,8 @@ import MenuItemModal from '../components/MenuItemModal';
 import CustomOrderModal from '../components/CustomOrderModal';
 import { MagicCard } from '../components/magicui/MagicCard';
 import { Marquee } from '../components/magicui/Marquee';
+import { Meteors } from '../components/magicui/Meteors';
+import { ShimmerButton } from '../components/magicui/ShimmerButton';
 import BannerCarousel from '../components/BannerCarousel';
 import { supabase } from '../lib/supabase';
 
@@ -20,6 +23,16 @@ export default function HomePage() {
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
   const [isCustomModalOpen, setIsCustomModalOpen] = useState(false);
   const [banners, setBanners] = useState<Banner[]>([]);
+
+  const [searchParams] = useSearchParams();
+  
+  useEffect(() => {
+    // Preserve table search param
+    const tableParam = searchParams.get('table');
+    if (tableParam) {
+      localStorage.setItem('restaurant_table_number', tableParam);
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchBanners = async () => {
@@ -130,11 +143,12 @@ export default function HomePage() {
 
         {/* Hero */}
         <motion.section 
-          className="hero"
+          className="hero overflow-hidden relative"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
+          <Meteors number={20} />
           <div className="hero-content" style={{ position: 'relative' }}>
             {/* Aceternity Style Background Glow */}
             <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '150%', height: '150%', background: 'radial-gradient(circle, rgba(255,45,85,0.08) 0%, rgba(255,45,85,0) 70%)', zIndex: -1, pointerEvents: 'none' }} />
@@ -177,15 +191,15 @@ export default function HomePage() {
               </motion.div>
             )}
 
-            <motion.a 
-              href="#menu" 
-              className="hero-cta"
-              style={{ marginTop: '24px' }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
-              ดูเมนู <ArrowRight size={18} />
-            </motion.a>
+            <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+              <a href="#menu" style={{ textDecoration: 'none' }}>
+                <ShimmerButton shimmerColor="rgba(255, 45, 85, 0.8)" background="var(--text-primary)">
+                  <span className="flex items-center gap-2 font-semibold">
+                    ดูเมนู <ArrowRight size={18} />
+                  </span>
+                </ShimmerButton>
+              </a>
+            </div>
           </div>
         </motion.section>
 

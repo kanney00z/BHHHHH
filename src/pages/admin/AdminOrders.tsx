@@ -177,6 +177,11 @@ export default function AdminOrders() {
                           </span>
                         )}
                       </div>
+                      {order.tableNumber && (
+                        <div style={{ marginTop: 6, display: 'inline-block', background: 'var(--accent)', color: 'white', padding: '4px 8px', borderRadius: '4px', fontWeight: 'bold', fontSize: '0.9rem', boxShadow: '0 2px 5px var(--accent-glow)' }}>
+                          🍽️ โต๊ะ: {order.tableNumber}
+                        </div>
+                      )}
                     </td>
                     <td data-label="เบอร์โทร">{order.customerPhone}</td>
                     <td data-label="รายการ">

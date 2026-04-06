@@ -203,6 +203,8 @@ export default function CheckoutPage() {
         finalAddress = addressNote ? `${link}\nจุดสังเกต: ${addressNote}` : link;
       }
 
+      const savedTable = localStorage.getItem('restaurant_table_number') || undefined;
+
       const order = await addOrder(items, grandTotal, {
         name,
         phone,
@@ -214,6 +216,7 @@ export default function CheckoutPage() {
         deliveryFee,
         promoCode: activePromoCode,
         discountAmount,
+        tableNumber: savedTable,
       });
       
       if (activePromoCode) {

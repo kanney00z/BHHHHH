@@ -14,6 +14,7 @@ interface OrderCustomer {
   deliveryFee?: number;
   promoCode?: string;
   discountAmount?: number;
+  tableNumber?: string;
 }
 
 interface OrderContextType {
@@ -114,6 +115,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
           orderType: o.order_type || 'delivery',
           pickupTime: o.pickup_time || undefined,
           customerName: o.customerName || '',
+          tableNumber: o.table_number || undefined,
           customerPhone: o.phone || '',
           customerAddress: o.address || '',
           paymentMethod: o.paymentMethod as any,
@@ -198,6 +200,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       pickup_time: customer.pickupTime || null,
       promo_code: customer.promoCode || null,
       discount_amount: customer.discountAmount || 0,
+      table_number: customer.tableNumber || null,
     });
 
     if (orderError) throw orderError;
@@ -238,6 +241,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       paymentSlipUrl: customer.paymentSlipUrl,
       promoCode: customer.promoCode,
       discountAmount: customer.discountAmount,
+      tableNumber: customer.tableNumber,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };

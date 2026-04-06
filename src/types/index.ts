@@ -75,6 +75,7 @@ export type OrderType = 'delivery' | 'dine_in' | 'takeaway';
 export interface Order {
   id: string;
   queueNumber?: number;
+  tableNumber?: string;
   items: CartItem[];
   total: number;
   deliveryFee?: number;
