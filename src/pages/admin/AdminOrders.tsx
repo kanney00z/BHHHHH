@@ -323,6 +323,7 @@ export default function AdminOrders() {
               {editItems.map((item, idx) => (
                 <div key={item.id} style={{ display: 'grid', gridTemplateColumns: '1fr 80px 100px 40px', gap: '8px', alignItems: 'center' }}>
                   <input 
+                    className="option-input"
                     type="text" 
                     value={item.customName} 
                     onChange={e => {
@@ -331,9 +332,10 @@ export default function AdminOrders() {
                       setEditItems(newItems);
                     }} 
                     placeholder="ชื่อรายการ"
-                    style={{ padding: '6px', fontSize: '0.9rem' }}
+                    style={{ padding: '8px 10px', fontSize: '0.9rem', width: '100%' }}
                   />
                   <input 
+                    className="option-input"
                     type="number" 
                     value={item.price} 
                     onChange={e => {
@@ -342,7 +344,7 @@ export default function AdminOrders() {
                       setEditItems(newItems);
                     }} 
                     placeholder="ราคา"
-                    style={{ padding: '6px', fontSize: '0.9rem' }}
+                    style={{ padding: '8px 10px', fontSize: '0.9rem', width: '100%' }}
                   />
                   <div className="qty-controls" style={{ transform: 'scale(0.8)', transformOrigin: 'left center', margin: 0 }}>
                     <button type="button" onClick={() => {

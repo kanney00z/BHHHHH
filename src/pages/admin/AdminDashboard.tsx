@@ -1,6 +1,7 @@
 import { useState, useRef, MouseEvent } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { DollarSign, ShoppingCart, TrendingUp, Users, QrCode, LayoutDashboard } from 'lucide-react';
+import { DollarSign, ShoppingCart, TrendingUp, Users, QrCode, LayoutDashboard, Download, Award } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, LineChart, Line, Legend } from 'recharts';
 import { useOrders } from '../../context/OrderContext';
 import { useMenu } from '../../context/MenuContext';
 import AdminSidebar from '../../components/AdminSidebar';
@@ -77,7 +78,8 @@ export default function AdminDashboard() {
   const totalItems = menuItems.length;
   
   const [showQR, setShowQR] = useState(false);
-  const orderUrl = window.location.origin;
+  const [qrTableNumber, setQrTableNumber] = useState('');
+  const orderUrl = qrTableNumber.trim() ? `${window.location.origin}/?table=${encodeURIComponent(qrTableNumber.trim())}` : window.location.origin;
 
   const recentOrders = orders.slice(0, 8);
 
@@ -103,6 +105,49 @@ export default function AdminDashboard() {
 
   const maxDailySale = Math.max(...salesByDay.map(s => s.total), 1);
 
+  // ----- Top Selling Items -----
+  const topSellingItems = (() => {
+    const counts: Record<string, { count: number; name: string; revenue: number }> = {};
+    orders.forEach(o => {
+      if (o.status !== 'cancelled') {
+        o.items.forEach(i => {
+          const key = i.menuItem.id;
+          if (!counts[key]) {
+            counts[key] = { count: 0, name: i.menuItem.name, revenue: 0 };
+          }
+          counts[key].count += i.quantity;
+          counts[key].revenue += i.quantity * i.menuItem.price;
+        });
+      }
+    });
+    return Object.values(counts).sort((a, b) => b.count - a.count).slice(0, 5);
+  })();
+
+  const handleExportCSV = () => {
+    const headers = ['Order ID', 'Date', 'Customer Name', 'Phone', 'Items', 'Total', 'Status', 'Payment Method'];
+    const rows = orders.map(o => {
+      return [
+        o.id,
+        new Date(o.createdAt).toLocaleString('th-TH'),
+        `"${o.customerName}"`,
+        o.customerPhone,
+        `"${o.items.map(i => `${i.menuItem.name} x${i.quantity}`).join(', ')}"`,
+        o.total,
+        o.status,
+        o.paymentMethod
+      ].join(',');
+    });
+    const csvContent = "\uFEFF" + [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `yumdash_sales_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const statusLabel: Record<string, string> = {
     confirmed: 'ยืนยันแล้ว',
     preparing: 'กำลังเตรียม',
@@ -125,9 +170,14 @@ export default function AdminDashboard() {
             </h1>
             <p style={{ marginTop: '8px', color: 'var(--text-secondary)' }}>ภาพรวมร้านอาหารของคุณ</p>
           </div>
-          <button className="btn-primary" onClick={() => setShowQR(true)} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <QrCode size={18} /> สร้าง QR Code ร้าน
-          </button>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button className="btn-secondary" onClick={handleExportCSV} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <Download size={18} /> Export CSV
+            </button>
+            <button className="btn-primary" onClick={() => setShowQR(true)} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <QrCode size={18} /> สร้าง QR Code ร้าน
+            </button>
+          </div>
         </div>
 
         <div className="stats-grid">
@@ -161,48 +211,54 @@ export default function AdminDashboard() {
           </TiltStatCard>
         </div>
 
-        {/* --- Business Analytics Chart --- */}
-        <div style={{ marginBottom: 40, marginTop: 10, background: 'var(--bg-card)', padding: '24px', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-md)', border: '1px solid var(--glass-border-hover)' }}>
-          <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 700, marginBottom: '24px', color: 'var(--text-primary)' }}>
-            ยอดขายย้อนหลัง 7 วัน <span style={{fontSize:'0.9rem', color: 'var(--text-muted)'}}>(ไม่รวมออเดอร์ที่ถูกยกเลิก)</span>
-          </h2>
-          
-          <div style={{ display: 'flex', alignItems: 'flex-end', height: '200px', gap: '8px', paddingTop: '20px' }}>
-            {salesByDay.map((day, idx) => {
-              const heightPct = Math.max((day.total / maxDailySale) * 100, 2); // At least 2% to show the bar
-              return (
-                <div key={idx} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', height: '100%', position: 'relative' }}>
-                  {/* Tooltip-like value */}
-                  <div style={{ 
-                    position: 'absolute', 
-                    top: `calc(${100 - heightPct}% - 24px)`, 
-                    fontSize: '0.75rem', 
-                    fontWeight: 600, 
-                    color: 'var(--accent)', 
-                    opacity: day.total > 0 ? 1 : 0.5 
-                  }}>
-                    ฿{day.total.toLocaleString()}
+        {/* --- Business Analytics Section --- */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '24px', marginBottom: 40, marginTop: 10 }}>
+          {/* Chart */}
+          <div style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-md)', border: '1px solid var(--glass-border-hover)' }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 700, marginBottom: '24px', color: 'var(--text-primary)' }}>
+              ยอดขายย้อนหลัง 7 วัน
+            </h2>
+            <div style={{ width: '100%', height: 300 }}>
+              <ResponsiveContainer>
+                <BarChart data={salesByDay} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" opacity={0.5} />
+                  <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-secondary)' }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-secondary)' }} tickFormatter={value => `฿${value}`} />
+                  <RechartsTooltip 
+                    cursor={{ fill: 'var(--bg-primary)', opacity: 0.4 }}
+                    contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--shadow-lg)', background: 'var(--bg-card)', color: 'var(--text-primary)' }}
+                    formatter={(value: any) => [`฿${Number(value).toLocaleString()}`, 'ยอดขาย']}
+                  />
+                  <Bar dataKey="total" radius={[6, 6, 0, 0]} fill="var(--accent)" name="ยอดขาย" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Top Selling Items */}
+          <div style={{ background: 'var(--bg-card)', padding: '24px', borderRadius: 'var(--radius-lg)', boxShadow: 'var(--shadow-md)', border: '1px solid var(--glass-border-hover)' }}>
+            <h2 style={{ display: 'flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 700, marginBottom: '24px', color: 'var(--text-primary)' }}>
+              <Award size={20} color="var(--accent)" /> เมนูยอดฮิต (Top 5)
+            </h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {topSellingItems.map((item, idx) => (
+                <div key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div style={{ width: '30px', height: '30px', borderRadius: '50%', background: idx === 0 ? 'var(--accent-glow)' : 'var(--bg-primary)', color: idx === 0 ? 'var(--accent)' : 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                    {idx + 1}
                   </div>
-                  
-                  {/* The Bar */}
-                  <div style={{ flex: 1, display: 'flex', alignItems: 'flex-end', width: '100%', padding: '0 10%' }}>
-                    <div style={{
-                      width: '100%',
-                      height: `${heightPct}%`,
-                      background: day.total > 0 ? 'var(--accent-gradient)' : 'var(--bg-primary)',
-                      borderRadius: '8px 8px 0 0',
-                      transition: 'height 0.5s cubic-bezier(0.25, 1, 0.5, 1)',
-                      boxShadow: day.total > 0 ? 'var(--shadow-glow)' : 'none'
-                    }}></div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.95rem' }}>{item.name}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>จำนวน: {item.count} จาน</div>
                   </div>
-                  
-                  {/* X-axis Label */}
-                  <div style={{ marginTop: '8px', fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                    {day.label}
+                  <div style={{ fontWeight: 700, color: 'var(--success)' }}>
+                    ฿{item.revenue.toLocaleString()}
                   </div>
                 </div>
-              );
-            })}
+              ))}
+              {topSellingItems.length === 0 && (
+                <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: 20 }}>ยังไม่มีข้อมูลยอดขาย</div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -239,6 +295,28 @@ export default function AdminDashboard() {
       
       <Modal isOpen={showQR} onClose={() => setShowQR(false)} title="📱 QR Code หน้าสั่งอาหาร">
         <div style={{ textAlign: 'center', padding: '20px' }}>
+          <div style={{ marginBottom: 20 }}>
+            <label style={{ display: 'block', marginBottom: 8, color: 'var(--text-primary)', fontWeight: 600 }}>สร้าง QR Code สำหรับโต๊ะ (ระบุเบอร์หรือเว้นว่าง):</label>
+            <input 
+              type="text" 
+              placeholder="เช่น 1 หรือ VIP-01" 
+              value={qrTableNumber} 
+              onChange={e => setQrTableNumber(e.target.value)}
+              style={{ 
+                width: '100%', 
+                maxWidth: '200px', 
+                padding: '10px 14px', 
+                fontSize: '1.05rem', 
+                textAlign: 'center',
+                background: 'var(--bg-secondary)',
+                border: '1px solid var(--accent)',
+                borderRadius: 'var(--radius-sm)',
+                color: 'var(--text-primary)',
+                outline: 'none',
+                boxShadow: '0 0 0 2px var(--accent-glow)'
+              }}
+            />
+          </div>
           <div style={{ 
             background: 'white', 
             padding: '24px', 

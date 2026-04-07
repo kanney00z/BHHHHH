@@ -130,8 +130,28 @@ export default function HomePage() {
         </div>
       )}
       {!isStoreOpen && (
-        <div style={{ background: '#ef4444', color: '#fff', padding: '16px 20px', textAlign: 'center', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-          <Clock size={18} /> ขณะนี้อยู่นอกเวลาทำการ ({settings?.opening_time} - {settings?.closing_time} น.) งดรับออเดอร์ชั่วคราว
+        <div style={{ 
+          background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.9) 0%, rgba(185, 28, 28, 0.98) 100%)', 
+          backdropFilter: 'blur(12px)',
+          color: '#fff', 
+          padding: '14px 20px', 
+          textAlign: 'center', 
+          fontWeight: 600, 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          gap: '12px',
+          boxShadow: '0 4px 20px rgba(239, 68, 68, 0.3)',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          position: 'relative',
+          zIndex: 10
+        }}>
+          <Clock size={22} color="rgba(255,255,255,0.9)" className="animate-pulse" />
+          <span>
+            ขณะนี้อยู่นอกเวลาทำการ 
+            <span style={{ opacity: 0.8, fontWeight: 400, margin: '0 6px' }}>({settings?.opening_time} - {settings?.closing_time} น.)</span> 
+            งดรับออเดอร์ชั่วคราว
+          </span>
         </div>
       )}
       <div className="page-container">

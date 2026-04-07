@@ -337,7 +337,7 @@ export default function AdminMenu() {
                 {form.options.map((opt, optIndex) => (
                   <div key={opt.id} style={{ background: 'var(--bg-secondary)', padding: 12, borderRadius: 8, marginBottom: 12 }}>
                     <div style={{ display: 'flex', gap: 12, marginBottom: 8 }}>
-                      <input style={{ flex: 1, padding: '6px 10px', fontSize: '0.9rem' }} placeholder="ชื่อกลุ่ม เช่น เลือกเส้น, เพิ่มไข่" value={opt.name} onChange={e => {
+                      <input className="option-input" style={{ flex: 1, padding: '8px 12px', fontSize: '0.9rem' }} placeholder="ชื่อกลุ่ม เช่น เลือกเส้น, เพิ่มไข่" value={opt.name} onChange={e => {
                         const newOpts = [...form.options];
                         newOpts[optIndex].name = e.target.value;
                         setForm({...form, options: newOpts});
@@ -357,12 +357,12 @@ export default function AdminMenu() {
                     <div style={{ paddingLeft: 12, borderLeft: '2px solid var(--border)' }}>
                       {opt.choices.map((choice, choiceIdx) => (
                         <div key={choice.id} style={{ display: 'flex', gap: 8, marginBottom: 6, alignItems: 'center' }}>
-                          <input style={{ flex: 2, padding: '4px 8px', fontSize: '0.85rem' }} placeholder="ตัวเลือก เช่น เส้นใหญ่" value={choice.name} onChange={e => {
+                          <input className="option-input" style={{ flex: 2, padding: '6px 10px', fontSize: '0.85rem' }} placeholder="ตัวเลือก เช่น เส้นใหญ่" value={choice.name} onChange={e => {
                             const newOpts = [...form.options];
                             newOpts[optIndex].choices[choiceIdx].name = e.target.value;
                             setForm({...form, options: newOpts});
                           }} />
-                          <input type="number" style={{ flex: 1, padding: '4px 8px', fontSize: '0.85rem' }} placeholder="ราคา" value={choice.price || ''} onChange={e => {
+                          <input className="option-input" type="number" style={{ flex: 1, padding: '6px 10px', fontSize: '0.85rem' }} placeholder="ราคา" value={choice.price || ''} onChange={e => {
                             const newOpts = [...form.options];
                             newOpts[optIndex].choices[choiceIdx].price = Number(e.target.value);
                             setForm({...form, options: newOpts});
