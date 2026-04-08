@@ -202,8 +202,10 @@ export default function AdminTables() {
         @media (max-width: 768px) {
             .table-manager-container { flex-direction: column; }
             .table-panel {
-                position: fixed; inset: 0; z-index: 50; max-width: 100%; height: 100vh;
+                position: fixed; inset: 0; z-index: 9999; max-width: 100%; height: 100vh;
                 border-radius: 0; box-shadow: none; border: none;
+                padding-bottom: 100px;
+                background: var(--bg-primary);
             }
         }
       `}</style>
