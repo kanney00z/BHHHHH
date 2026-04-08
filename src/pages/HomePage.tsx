@@ -267,16 +267,18 @@ export default function HomePage() {
         <div id="menu" style={{ padding: '0 20px 32px', maxWidth: '600px', margin: '0 auto', position: 'relative' }}>
           <motion.div 
             className="search-box-magic"
-            whileFocus={{ scale: 1.02 }}
+            whileFocus={{ scale: 1.03 }}
             style={{ 
               position: 'relative', 
               display: 'flex', 
               alignItems: 'center', 
               background: 'var(--bg-glass)', 
-              borderRadius: '24px',
-              border: '1px solid var(--border)',
-              padding: '12px 24px',
-              boxShadow: '0 8px 32px rgba(0,0,0,0.04)',
+              backdropFilter: 'blur(20px)',
+              WebkitBackdropFilter: 'blur(20px)',
+              borderRadius: '100px',
+              border: '1px solid var(--bg-glass-border)',
+              padding: '16px 24px',
+              boxShadow: 'var(--shadow-glass), inset 0 1px 0 rgba(255,255,255,0.6)',
               transition: 'all 0.3s ease',
               overflow: 'hidden'
             }}

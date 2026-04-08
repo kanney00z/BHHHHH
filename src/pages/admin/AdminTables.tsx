@@ -46,9 +46,10 @@ export default function AdminTables() {
 
     // Process only dine_in orders that are not cancelled or completed payment (if standard flow: completed is marked, but we use delivered/payment depending on backend logic. Let's assume active means not cancelled and not 'completed' - since there's no completed status, we assume 'awaiting_payment' is billing, and 'delivered' is eating but if they finish they just cancel/delete the order? Actually, there must be a way to clear the table by deleting or updating status. We will check.)
     // Active orders exclude 'cancelled'
-    const activeDineInOrders = orders.filter(o => o.orderType === 'dine_in' && o.status !== 'cancelled' && o.status !== 'completed' && o.tableNumber);
+    // Active orders exclude 'cancelled' and 'completed'
+    const activeTableOrders = orders.filter(o => o.status !== 'cancelled' && o.status !== 'completed' && o.tableNumber);
 
-    activeDineInOrders.forEach(o => {
+    activeTableOrders.forEach(o => {
         const tNum = parseInt(o.tableNumber || '', 10);
         if (tNum >= 1 && tNum <= totalTables) {
             data[tNum].activeOrders.push(o);
@@ -311,9 +312,22 @@ export default function AdminTables() {
                         <div>
                             {/* Merge all items into a single bill list visually */}
                             <div style={{ background: 'var(--bg-primary)', padding: 16, borderRadius: 'var(--radius-md)', marginBottom: 16, border: '1px solid var(--bg-glass-border)' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12, paddingBottom: 12, borderBottom: '1px dashed var(--bg-glass-border)' }}>
-                                    <span style={{ fontWeight: 800 }}>รวมบิลโต๊ะที่ {selectedTable}</span>
-                                    <span style={{ fontSize: '0.8rem', background: 'var(--bg-secondary)', padding: '2px 8px', borderRadius: 999 }}>{selectedTableInfo.activeOrders.length} ออเดอร์ (Ticket)</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 12, paddingBottom: 12, borderBottom: '1px dashed var(--bg-glass-border)', flexWrap: 'wrap', gap: '8px' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                        <span style={{ fontWeight: 800 }}>รวมบิลโต๊ะที่ {selectedTable}</span>
+                                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                                            {Array.from(new Set(selectedTableInfo.activeOrders.map(o => o.orderType || 'dine_in'))).map(type => (
+                                                <span key={type} style={{ 
+                                                    fontSize: '0.7rem', fontWeight: 'bold', padding: '2px 6px', borderRadius: '4px',
+                                                    background: type === 'dine_in' ? 'rgba(59, 130, 246, 0.15)' : type === 'takeaway' ? 'rgba(245, 158, 11, 0.15)' : 'rgba(168, 85, 247, 0.15)',
+                                                    color: type === 'dine_in' ? '#3b82f6' : type === 'takeaway' ? '#f59e0b' : '#a855f7',
+                                                }}>
+                                                    {type === 'dine_in' ? '🍽️ ทานที่ร้าน' : type === 'takeaway' ? '🛍️ สั่งกลับบ้าน' : '🛵 จัดส่ง (Delivery)'}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <span style={{ fontSize: '0.8rem', background: 'var(--bg-secondary)', padding: '4px 8px', borderRadius: 999 }}>{selectedTableInfo.activeOrders.length} ออเดอร์ (Ticket)</span>
                                 </div>
                                 
                                 <div style={{ marginBottom: 16 }}>

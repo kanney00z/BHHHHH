@@ -60,6 +60,8 @@ export default function FoodCard({ item, onAddClick, disabled = false }: FoodCar
       ref={cardRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      whileHover={{ y: -6, scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
       style={{
         rotateX,
         rotateY,
@@ -67,7 +69,8 @@ export default function FoodCard({ item, onAddClick, disabled = false }: FoodCar
         display: 'flex', 
         flexDirection: 'column', 
         height: '100%', 
-        marginBottom: '16px'
+        marginBottom: '16px',
+        boxShadow: 'var(--shadow-md)'
       }}
       className={`food-card-wrapper ${disabled ? 'opacity-50 grayscale' : ''}`}
     >

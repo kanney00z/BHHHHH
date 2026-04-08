@@ -4,48 +4,48 @@
 @tailwind utilities;
 
 :root {
-  --bg-primary: #f5f5f7;
+  --bg-primary: #f8fafc;
   --bg-secondary: #ffffff;
   --bg-card: #ffffff;
-  --bg-card-hover: #fcfcfc;
-  --bg-glass: rgba(255, 255, 255, 0.85);
-  --bg-glass-border: rgba(0, 0, 0, 0.05); /* very subtle */
-  --glass-border-hover: rgba(0, 0, 0, 0.1);
+  --bg-card-hover: #fafafa;
+  --bg-glass: rgba(255, 255, 255, 0.7);
+  --bg-glass-border: rgba(255, 255, 255, 0.5); 
+  --glass-border-hover: rgba(255, 255, 255, 0.8);
   
-  --text-primary: #1d1d1f;
-  --text-secondary: #86868b;
-  --text-muted: #a1a1a6;
+  --text-primary: #0f172a;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
   
-  --accent: #ff2d55;
-  --accent-hover: #e0244a;
-  --accent-glow: rgba(255, 45, 85, 0.2);
-  --accent-gradient: linear-gradient(135deg, #ff2d55, #ff3b30);
+  --accent: #f43f5e;
+  --accent-hover: #e11d48;
+  --accent-glow: rgba(244, 63, 94, 0.2);
+  --accent-gradient: linear-gradient(135deg, #f43f5e, #ff8a65);
   
-  --cyan: #32ade6;
-  --cyan-glow: rgba(50, 173, 230, 0.2);
+  --cyan: #0ea5e9;
+  --cyan-glow: rgba(14, 165, 233, 0.2);
   
-  --success: #34c759;
-  --warning: #ffcc00;
-  --danger: #ff3b30;
-  --info: #007aff;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+  --info: #3b82f6;
   
-  --purple: #af52de;
-  --purple-glow: rgba(175, 82, 222, 0.2);
+  --purple: #8b5cf6;
+  --purple-glow: rgba(139, 92, 246, 0.2);
   
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-xl: 32px;
+  --radius-sm: 12px;
+  --radius-md: 20px;
+  --radius-lg: 28px;
+  --radius-xl: 40px;
   
-  /* BENTO GRID SOFT SHADOWS */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.08);
-  --shadow-glass: 0 12px 36px 0 rgba(0, 0, 0, 0.08);
-  --shadow-glow: 0 8px 24px rgba(255, 45, 85, 0.25);
-  --shadow-cyan: 0 8px 24px rgba(50, 173, 230, 0.25);
+  /* BENTO GRID SOFT SHADOWS - Apple Inspired */
+  --shadow-sm: 0 4px 12px rgba(15, 23, 42, 0.04), 0 0 1px rgba(15, 23, 42, 0.08);
+  --shadow-md: 0 12px 32px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.04);
+  --shadow-lg: 0 24px 60px rgba(15, 23, 42, 0.08);
+  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  --shadow-glow: 0 8px 24px rgba(244, 63, 94, 0.25);
+  --shadow-cyan: 0 8px 24px rgba(14, 165, 233, 0.25);
   
-  --glass-highlight: none;
+  --glass-highlight: inset 0 1px 0 rgba(255, 255, 255, 0.6);
   
   --transition-fast: 0.15s ease-out;
   --transition-normal: 0.3s cubic-bezier(0.25, 1, 0.5, 1);
