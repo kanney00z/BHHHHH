@@ -25,7 +25,7 @@ export default function CheckoutPage() {
   const [address, setAddress] = useState('');
   const [mapPosition, setMapPosition] = useState<{lat: number, lng: number} | null>(null);
   const [addressNote, setAddressNote] = useState('');
-  const savedTable = typeof window !== 'undefined' ? localStorage.getItem('restaurant_table_number') : null;
+  const savedTable = typeof window !== 'undefined' ? sessionStorage.getItem('restaurant_table_number') : null;
   const [orderType, setOrderType] = useState<OrderType>(savedTable ? 'dine_in' : 'delivery');
   const [pickupTime, setPickupTime] = useState('');
   const [payment, setPayment] = useState<'cash' | 'promptpay' | 'card'>('cash');
@@ -204,7 +204,7 @@ export default function CheckoutPage() {
         finalAddress = addressNote ? `${link}\nจุดสังเกต: ${addressNote}` : link;
       }
 
-      const savedTable = localStorage.getItem('restaurant_table_number') || undefined;
+      const savedTable = sessionStorage.getItem('restaurant_table_number') || undefined;
 
       const order = await addOrder(items, grandTotal, {
         name,
@@ -288,7 +288,7 @@ export default function CheckoutPage() {
                   <button 
                     type="button"
                     onClick={() => {
-                        localStorage.removeItem('restaurant_table_number');
+                        sessionStorage.removeItem('restaurant_table_number');
                         window.location.reload();
                     }}
                     style={{ position: 'absolute', top: 8, right: 12, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '50%', width: 28, height: 28, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: 'var(--shadow-sm)' }}

@@ -30,7 +30,7 @@ export default function HomePage() {
     // Preserve table search param
     const tableParam = searchParams.get('table');
     if (tableParam) {
-      localStorage.setItem('restaurant_table_number', tableParam);
+      sessionStorage.setItem('restaurant_table_number', tableParam);
     }
   }, [searchParams]);
 
