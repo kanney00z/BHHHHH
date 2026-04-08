@@ -284,7 +284,18 @@ export default function CheckoutPage() {
         <form onSubmit={handleSubmit}>
           <div className="form-section" style={{ marginBottom: '24px' }}>
             {savedTable ? (
-              <div style={{ background: 'linear-gradient(135deg, rgba(255, 45, 85, 0.1), rgba(255, 85, 125, 0.05))', padding: '20px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(255, 45, 85, 0.3)', display: 'flex', alignItems: 'center', gap: 16, boxShadow: '0 8px 32px rgba(255,45,85,0.05)', marginBottom: 24 }}>
+              <div style={{ position: 'relative', background: 'linear-gradient(135deg, rgba(255, 45, 85, 0.1), rgba(255, 85, 125, 0.05))', padding: '20px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(255, 45, 85, 0.3)', display: 'flex', alignItems: 'center', gap: 16, boxShadow: '0 8px 32px rgba(255,45,85,0.05)', marginBottom: 24 }}>
+                  <button 
+                    type="button"
+                    onClick={() => {
+                        localStorage.removeItem('restaurant_table_number');
+                        window.location.reload();
+                    }}
+                    style={{ position: 'absolute', top: 8, right: 12, background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '50%', width: 28, height: 28, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: 'var(--shadow-sm)' }}
+                    title="ยกเลิกการล็อกโต๊ะ"
+                  >
+                    <X size={16} />
+                  </button>
                   <div style={{ background: 'var(--accent)', color: 'white', minWidth: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.4rem', boxShadow: '0 4px 12px rgba(255,45,85,0.3)' }}>
                       {savedTable}
                   </div>
