@@ -18,8 +18,16 @@ export default function AdminTables() {
     setPrintingTableQR(tableNum);
     setTimeout(() => {
       window.print();
-      setTimeout(() => setPrintingTableQR(null), 500);
-    }, 150);
+      // On iOS Safari, window.print() is non-blocking. If we remove the element
+      // too quickly, it prints a blank page. We clean it up safely using afterprint
+      // or a long fallback timeout.
+      const handleAfterPrint = () => {
+        setPrintingTableQR(null);
+        window.removeEventListener('afterprint', handleAfterPrint);
+      };
+      window.addEventListener('afterprint', handleAfterPrint);
+      setTimeout(() => setPrintingTableQR(null), 60000);
+    }, 500); // Give QR canvas 500ms to render properly
   };
 
   // Dynamic Total Tables from Realtime Settings
@@ -220,31 +228,6 @@ export default function AdminTables() {
             }
         }
 
-        /* Print QR Styles */
-        @media print {
-            body * {
-                visibility: hidden;
-            }
-            body, html {
-                background: #ffffff !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-            .table-qr-print-zone, .table-qr-print-zone * {
-                visibility: visible;
-                color: #000;
-            }
-            .table-qr-print-zone {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                display: flex !important;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                padding-top: 40px;
-            }
         }
       `}</style>
       

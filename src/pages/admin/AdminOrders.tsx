@@ -112,8 +112,13 @@ export default function AdminOrders() {
     setPrintingOrder(order);
     setTimeout(() => {
       window.print();
-      setTimeout(() => setPrintingOrder(null), 1000);
-    }, 150);
+      const handleAfterPrint = () => {
+        setPrintingOrder(null);
+        window.removeEventListener('afterprint', handleAfterPrint);
+      };
+      window.addEventListener('afterprint', handleAfterPrint);
+      setTimeout(() => setPrintingOrder(null), 60000);
+    }, 500); // Wait 500ms for DigitalReceipt to fully render
   };
 
   return (
