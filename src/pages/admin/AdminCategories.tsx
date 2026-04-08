@@ -63,6 +63,7 @@ export default function AdminCategories() {
                 <th>ไอคอน</th>
                 <th>ชื่อหมวดหมู่</th>
                 <th>จำนวนเมนู</th>
+                <th>การแสดงผล</th>
                 <th>การจัดการ</th>
               </tr>
             </thead>
@@ -72,6 +73,27 @@ export default function AdminCategories() {
                   <td data-label="ไอคอน" style={{ fontSize: '1.5rem' }}>{cat.icon}</td>
                   <td data-label="ชื่อหมวดหมู่" style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{cat.name}</td>
                   <td data-label="จำนวนเมนู">{menuItems.filter(i => i.categoryId === cat.id).length} เมนู</td>
+                  <td data-label="การแสดงผล">
+                    <label style={{ position: 'relative', display: 'inline-block', width: '44px', height: '24px' }}>
+                      <input 
+                        type="checkbox" 
+                        checked={cat.is_active !== false}
+                        onChange={(e) => updateCategory(cat.id, { is_active: e.target.checked })}
+                        style={{ opacity: 0, width: 0, height: 0 }}
+                      />
+                      <span style={{ 
+                        position: 'absolute', cursor: 'pointer', top: 0, left: 0, right: 0, bottom: 0, 
+                        backgroundColor: cat.is_active !== false ? 'var(--accent)' : 'var(--bg-glass-border)', 
+                        transition: '.4s', borderRadius: '24px' 
+                      }}>
+                        <span style={{
+                          position: 'absolute', height: '18px', width: '18px', left: cat.is_active !== false ? '22px' : '3px', bottom: '3px',
+                          backgroundColor: 'white', transition: '.4s', borderRadius: '50%',
+                          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                        }} />
+                      </span>
+                    </label>
+                  </td>
                   <td data-label="การจัดการ">
                     <button className="admin-action-btn" onClick={() => openEdit(cat)}>
                       <Pencil size={14} />

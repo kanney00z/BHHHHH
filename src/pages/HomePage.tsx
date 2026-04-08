@@ -333,7 +333,7 @@ export default function HomePage() {
           </div>
 
           <div className="category-tabs">
-            {categories.map(cat => (
+            {categories.filter(c => c.is_active !== false).map(cat => (
               <button
                 key={cat.id}
                 className={`category-tab ${activeCat === cat.id ? 'active' : ''}`}

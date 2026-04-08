@@ -2,6 +2,7 @@ export interface Category {
   id: string;
   name: string;
   icon: string;
+  is_active?: boolean;
 }
 
 export interface StoreSettings {
