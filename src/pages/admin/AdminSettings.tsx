@@ -2,13 +2,13 @@ import { useState, useEffect } from 'react';
 import AdminSidebar from '../../components/AdminSidebar';
 import { useSettings } from '../../context/SettingsContext';
 import { useToast } from '../../context/ToastContext';
+import { useMenu } from '../../context/MenuContext';
 import { Save, MapPin, Clock, Truck, Settings as SettingsIcon } from 'lucide-react';
 import MapPicker from '../../components/MapPicker';
 
 export default function AdminSettings() {
   const { settings, updateSettings, loading } = useSettings();
   const { showToast } = useToast();
-  
   const [restaurantName, setRestaurantName] = useState('');
   const [contactPhone, setContactPhone] = useState('');
   const [promptpayNumber, setPromptpayNumber] = useState('');
