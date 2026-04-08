@@ -5,12 +5,14 @@ export const MagicCard = ({
   className = "",
   glowColor = "rgba(255, 45, 85, 0.4)", // YumDash accent glow
   glowSize = 250,
+  style = {},
   onClick
 }: {
   children: React.ReactNode;
   className?: string;
   glowColor?: string;
   glowSize?: number;
+  style?: React.CSSProperties;
   onClick?: () => void;
 }) => {
   const [mousePosition, setMousePosition] = useState({ x: -1000, y: -1000 });
@@ -49,6 +51,7 @@ export const MagicCard = ({
         display: "flex",
         flexDirection: "column",
         transition: "transform 0.2s ease, box-shadow 0.2s ease",
+        ...style // Merge external style prop
       }}
       className={`magic-card ${className}`}
       onMouseOver={(e) => {
