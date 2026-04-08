@@ -119,7 +119,10 @@ Deno.serve(async (req: Request) => {
     };
     
     // Default to delivery if undefined, as existing orders might not have it
-    const orderTypeStr = orderTypeLabel[order.orderType || 'delivery'] || orderTypeLabel['delivery'];
+    let orderTypeStr = orderTypeLabel[order.orderType || 'delivery'] || orderTypeLabel['delivery'];
+    if (order.orderType === 'dine_in' && order.tableNumber) {
+      orderTypeStr = `🍽️ ทานที่ร้าน (โต๊ะ ${order.tableNumber})`;
+    }
     const timeStr = (order.orderType && order.orderType !== 'delivery' && order.pickupTime) ? ` เวลา ${order.pickupTime}` : '';
 
     const addressStr = order.customerAddress || '';
