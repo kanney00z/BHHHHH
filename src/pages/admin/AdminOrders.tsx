@@ -147,7 +147,19 @@ export default function AdminOrders() {
                   const utterance = new SpeechSynthesisUtterance('เปิดระบบเสียงแจ้งเตือนแล้วค่ะ');
                   utterance.lang = 'th-TH';
                   utterance.volume = 1;
-                  speechSynthesis.speak(utterance);
+
+                  // Force finding a Thai voice
+                  const voices = window.speechSynthesis.getVoices();
+                  const thVoice = voices.find(v => 
+                    v.lang.toLowerCase().includes('th') || 
+                    v.name.toLowerCase().includes('thai') || 
+                    v.name.includes('ไทย')
+                  );
+                  if (thVoice) {
+                    utterance.voice = thVoice;
+                  }
+
+                  window.speechSynthesis.speak(utterance);
                 }
                 
                 try {

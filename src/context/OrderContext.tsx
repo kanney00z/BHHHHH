@@ -100,8 +100,12 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       utterance.pitch = 1.1; // Slightly sweet/high pitch
       
       // Try to pick a standard Thai voice if available
-      const voices = speechSynthesis.getVoices();
-      const thVoice = voices.find(v => v.lang === 'th-TH' || v.lang === 'th');
+      const voices = window.speechSynthesis.getVoices();
+      const thVoice = voices.find(v => 
+        v.lang.toLowerCase().includes('th') || 
+        v.name.toLowerCase().includes('thai') || 
+        v.name.includes('ไทย')
+      );
       if (thVoice) {
         utterance.voice = thVoice;
       }
