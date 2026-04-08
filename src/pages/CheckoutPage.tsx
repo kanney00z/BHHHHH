@@ -25,7 +25,8 @@ export default function CheckoutPage() {
   const [address, setAddress] = useState('');
   const [mapPosition, setMapPosition] = useState<{lat: number, lng: number} | null>(null);
   const [addressNote, setAddressNote] = useState('');
-  const [orderType, setOrderType] = useState<OrderType>('delivery');
+  const savedTable = typeof window !== 'undefined' ? localStorage.getItem('restaurant_table_number') : null;
+  const [orderType, setOrderType] = useState<OrderType>(savedTable ? 'dine_in' : 'delivery');
   const [pickupTime, setPickupTime] = useState('');
   const [payment, setPayment] = useState<'cash' | 'promptpay' | 'card'>('cash');
   const [showConfirm, setShowConfirm] = useState(false);
@@ -281,25 +282,38 @@ export default function CheckoutPage() {
         <p className="subtitle">กรอกข้อมูลเพื่อยืนยันออเดอร์</p>
 
         <form onSubmit={handleSubmit}>
-          {/* Order Type Section */}
-          <div className="form-section">
-            <h3 style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-              <Store size={18} /> รูปแบบการสั่งอาหาร
-            </h3>
-            <div className="payment-options" style={{ marginBottom: 16 }}>
-              <div className={`payment-option ${orderType === 'delivery' ? 'selected' : ''}`} onClick={() => setOrderType('delivery')}>
-                <div className="pay-icon" style={{ fontSize: '1.2rem' }}><Truck size={20} /></div>
-                <div className="pay-label">จัดส่ง (Delivery)</div>
+          <div className="form-section" style={{ marginBottom: '24px' }}>
+            {savedTable ? (
+              <div style={{ background: 'linear-gradient(135deg, rgba(255, 45, 85, 0.1), rgba(255, 85, 125, 0.05))', padding: '20px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(255, 45, 85, 0.3)', display: 'flex', alignItems: 'center', gap: 16, boxShadow: '0 8px 32px rgba(255,45,85,0.05)', marginBottom: 24 }}>
+                  <div style={{ background: 'var(--accent)', color: 'white', minWidth: 48, height: 48, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '1.4rem', boxShadow: '0 4px 12px rgba(255,45,85,0.3)' }}>
+                      {savedTable}
+                  </div>
+                  <div>
+                      <h3 style={{ margin: '0 0 4px 0', color: 'var(--accent)', fontSize: '1.1rem' }}>สั่งอาหารแบบทานที่ร้าน</h3>
+                      <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>เสิร์ฟตรงถึง **โต๊ะที่ {savedTable}**</p>
+                  </div>
               </div>
-              <div className={`payment-option ${orderType === 'takeaway' ? 'selected' : ''}`} onClick={() => setOrderType('takeaway')}>
-                <div className="pay-icon" style={{ fontSize: '1.2rem' }}><BagIcon size={20} /></div>
-                <div className="pay-label">รับกลับบ้าน</div>
+            ) : (
+              <div>
+                <h3 style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+                  <Store size={18} /> รูปแบบการสั่งอาหาร
+                </h3>
+                <div className="payment-options" style={{ marginBottom: 16 }}>
+                  <div className={`payment-option ${orderType === 'delivery' ? 'selected' : ''}`} onClick={() => setOrderType('delivery')}>
+                    <div className="pay-icon" style={{ fontSize: '1.2rem' }}><Truck size={20} /></div>
+                    <div className="pay-label">จัดส่ง (Delivery)</div>
+                  </div>
+                  <div className={`payment-option ${orderType === 'takeaway' ? 'selected' : ''}`} onClick={() => setOrderType('takeaway')}>
+                    <div className="pay-icon" style={{ fontSize: '1.2rem' }}><BagIcon size={20} /></div>
+                    <div className="pay-label">รับกลับบ้าน</div>
+                  </div>
+                  <div className={`payment-option ${orderType === 'dine_in' ? 'selected' : ''}`} onClick={() => setOrderType('dine_in')}>
+                    <div className="pay-icon" style={{ fontSize: '1.2rem' }}><Store size={20} /></div>
+                    <div className="pay-label">ทานที่ร้าน</div>
+                  </div>
+                </div>
               </div>
-              <div className={`payment-option ${orderType === 'dine_in' ? 'selected' : ''}`} onClick={() => setOrderType('dine_in')}>
-                <div className="pay-icon" style={{ fontSize: '1.2rem' }}><Store size={20} /></div>
-                <div className="pay-label">ทานที่ร้าน</div>
-              </div>
-            </div>
+            )}
 
             {orderType !== 'delivery' && (
               <div className="form-group" style={{ 

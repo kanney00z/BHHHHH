@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { useOrders } from '../../context/OrderContext';
 import { Order } from '../../types';
-import { Grid, Utensils, CheckCircle, Clock, Banknote, X, Info, Receipt, Plus, Minus } from 'lucide-react';
+import { Grid, Utensils, CheckCircle, Clock, Banknote, X, Info, Receipt, Plus, Minus, QrCode } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import AdminSidebar from '../../components/AdminSidebar';
+import { QRCodeCanvas } from 'qrcode.react';
 
 import { useSettings } from '../../context/SettingsContext';
 
@@ -11,6 +12,15 @@ export default function AdminTables() {
   const { orders, updateOrderStatus, loading } = useOrders();
   const { settings, updateSettings } = useSettings();
   const [selectedTable, setSelectedTable] = useState<number | null>(null);
+  const [printingTableQR, setPrintingTableQR] = useState<number | null>(null);
+
+  const handlePrintTableQR = (tableNum: number) => {
+    setPrintingTableQR(tableNum);
+    setTimeout(() => {
+      window.print();
+      setTimeout(() => setPrintingTableQR(null), 500);
+    }, 150);
+  };
 
   // Dynamic Total Tables from Realtime Settings
   const totalTables = settings?.total_tables || 20;
@@ -209,6 +219,33 @@ export default function AdminTables() {
                 background: var(--bg-primary);
             }
         }
+
+        /* Print QR Styles */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            body, html {
+                background: #ffffff !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .table-qr-print-zone, .table-qr-print-zone * {
+                visibility: visible;
+                color: #000;
+            }
+            .table-qr-print-zone {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                display: flex !important;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding-top: 40px;
+            }
+        }
       `}</style>
       
       {/* Main Grid Area */}
@@ -296,6 +333,13 @@ export default function AdminTables() {
                         <X size={24} />
                     </button>
                 </div>
+
+                <button 
+                    onClick={() => handlePrintTableQR(selectedTable)}
+                    style={{ width: '100%', padding: '12px', background: 'var(--accent)', color: 'white', border: 'none', borderRadius: 'var(--radius-sm)', fontWeight: 'bold', display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8, cursor: 'pointer', marginBottom: 24, boxShadow: '0 4px 12px rgba(255,45,85,0.2)' }}
+                >
+                    <QrCode size={20} /> พิมพ์ QR Code สั่งอาหาร (โต๊ะ {selectedTable})
+                </button>
 
                 {selectedTableInfo.activeOrders.length === 0 ? (
                     <div style={{ textAlign: 'center', padding: '40px 0', color: 'var(--text-secondary)' }}>
@@ -412,6 +456,20 @@ export default function AdminTables() {
           </AnimatePresence>
         </div>
       </div>
+
+      {printingTableQR !== null && (
+          <div className="global-print-zone" style={{ position: 'absolute', top: '-9999px', left: '-9999px', width: '100%', alignItems: 'center' }}>
+              <div style={{ textAlign: 'center', fontFamily: 'sans-serif', border: '2px solid #000', padding: '40px', borderRadius: '24px', width: '380px', margin: '0 auto' }}>
+                  <h2 style={{ fontSize: '28px', marginBottom: '8px', marginTop: 0 }}>สแกนเพื่อสั่งอาหาร</h2>
+                  <h1 style={{ fontSize: '64px', margin: '0 0 24px 0', borderBottom: '2px dashed #000', paddingBottom: '24px' }}>โต๊ะ {printingTableQR}</h1>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
+                      <QRCodeCanvas value={`${window.location.origin}/?table=${printingTableQR}`} size={280} level="H" />
+                  </div>
+                  <p style={{ marginTop: '16px', fontSize: '18px', fontWeight: 'bold' }}>ไม่ต้องเรียกพนักงาน สั่งปุ๊บเสิร์ฟปั๊บ!</p>
+                  <p style={{ fontSize: '14px', color: '#555' }}>Powered by YumDash POS</p>
+              </div>
+          </div>
+      )}
     </div>
   );
 }

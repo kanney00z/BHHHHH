@@ -406,6 +406,14 @@ export default function AdminOrders() {
         </Modal>
 
       </div>
+      
+      {printingOrder && (
+        <div className="global-print-zone" style={{ position: 'absolute', top: '-9999px', display: 'none' }}>
+          <div className="receipt-80mm">
+            <DigitalReceipt order={printingOrder} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
