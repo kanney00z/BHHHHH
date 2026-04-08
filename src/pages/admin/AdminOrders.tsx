@@ -31,7 +31,7 @@ const statusFilterLabel: Record<string, string> = {
 };
 
 export default function AdminOrders() {
-  const { orders, updateOrderStatus, updateOrderDetails, deleteOrder } = useOrders();
+  const { orders, updateOrderStatus, updateOrderDetails, deleteOrder, voiceEnabled, setVoiceEnabled } = useOrders();
   const [filter, setFilter] = useState('all');
   
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
@@ -135,6 +135,22 @@ export default function AdminOrders() {
             </h1>
             <p style={{ marginTop: '8px', color: 'var(--text-secondary)' }}>ดู แก้ไข หรือลบออเดอร์ทั้งหมดในระบบ</p>
           </div>
+          
+          {/* Voice Notification Toggle */}
+          <button 
+            onClick={() => setVoiceEnabled(!voiceEnabled)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '8px',
+              padding: '10px 16px', borderRadius: '24px',
+              border: `1px solid ${voiceEnabled ? 'var(--accent)' : 'var(--border)'}`,
+              background: voiceEnabled ? 'var(--accent-glow)' : 'transparent',
+              color: voiceEnabled ? 'var(--accent)' : 'var(--text-secondary)',
+              cursor: 'pointer', transition: 'all 0.3s ease',
+              fontWeight: 600, fontSize: '0.9rem'
+            }}
+          >
+            {voiceEnabled ? '🔊 เสียงแจ้งเตือน: เปิด' : '🔈 เสียงแจ้งเตือน: ปิด'}
+          </button>
         </div>
 
         <div className="filter-tabs">

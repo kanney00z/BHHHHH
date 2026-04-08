@@ -25,6 +25,8 @@ interface OrderContextType {
   updateOrderDetails: (orderId: string, updates: Partial<Order>, itemsUpdates?: { menu_item_id: string; custom_name?: string; price_at_time: number; quantity: number; selected_options?: any[]; note?: string }[]) => Promise<void>;
   deleteOrder: (orderId: string) => Promise<void>;
   getOrder: (orderId: string) => Order | undefined;
+  voiceEnabled: boolean;
+  setVoiceEnabled: (enabled: boolean) => void;
 }
 
 const OrderContext = createContext<OrderContextType | null>(null);
@@ -32,7 +34,14 @@ const OrderContext = createContext<OrderContextType | null>(null);
 export function OrderProvider({ children }: { children: React.ReactNode }) {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  const [voiceEnabled, setVoiceEnabled] = useState(() => {
+    return localStorage.getItem('ai_voice_alert') === 'true';
+  });
   const { showToast } = useToast();
+
+  useEffect(() => {
+    localStorage.setItem('ai_voice_alert', String(voiceEnabled));
+  }, [voiceEnabled]);
 
   const playNotificationSound = useCallback(() => {
     try {
@@ -65,6 +74,41 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
       console.log('Audio notification blocked or unsupported', e);
     }
   }, []);
+
+  const playVoiceNotification = useCallback((payload: any) => {
+    if (!voiceEnabled || !('speechSynthesis' in window)) return;
+    
+    // Slight delay to let the ding-dong play first
+    setTimeout(() => {
+      const orderType = payload.new.order_type || 'delivery';
+      let typeStr = 'จัดส่ง';
+      if (orderType === 'dine_in') typeStr = 'ทานที่ร้าน';
+      if (orderType === 'takeaway') typeStr = 'สั่งกลับบ้าน';
+      
+      const total = payload.new.total || 0;
+      const table = payload.new.table_number;
+      
+      let speechText = `มีออเดอร์ใหม่แบบ${typeStr}`;
+      if (orderType === 'dine_in' && table) {
+        speechText += ` โต๊ะที่ ${table}`;
+      }
+      speechText += ` ยอดรวม ${total} บาทค่ะ`;
+
+      const utterance = new SpeechSynthesisUtterance(speechText);
+      utterance.lang = 'th-TH';
+      utterance.rate = 1.0; // Normal speed
+      utterance.pitch = 1.1; // Slightly sweet/high pitch
+      
+      // Try to pick a standard Thai voice if available
+      const voices = speechSynthesis.getVoices();
+      const thVoice = voices.find(v => v.lang === 'th-TH' || v.lang === 'th');
+      if (thVoice) {
+        utterance.voice = thVoice;
+      }
+      
+      speechSynthesis.speak(utterance);
+    }, 1200);
+  }, [voiceEnabled]);
 
   const fetchOrders = useCallback(async () => {
     try {
@@ -145,6 +189,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
         console.log('Orders realtime trigger', payload);
         if (payload.eventType === 'INSERT') {
           playNotificationSound();
+          playVoiceNotification(payload);
           showToast(`🔔 มีออเดอร์ใหม่เข้า! (คิว #${payload.new.queue_number || 'NA'})`, 'success');
         }
         fetchOrders();
@@ -334,7 +379,7 @@ export function OrderProvider({ children }: { children: React.ReactNode }) {
   }, [orders]);
 
   return (
-    <OrderContext.Provider value={{ orders, loading, addOrder, updateOrderStatus, updateOrderDetails, deleteOrder, getOrder }}>
+    <OrderContext.Provider value={{ orders, loading, addOrder, updateOrderStatus, updateOrderDetails, deleteOrder, getOrder, voiceEnabled, setVoiceEnabled }}>
       {children}
     </OrderContext.Provider>
   );
