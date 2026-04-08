@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ChefHat, ShoppingCart, ReceiptText, Settings, LayoutDashboard, UtensilsCrossed, Image, FolderOpen, Ticket } from 'lucide-react';
+import { ChefHat, ShoppingCart, ReceiptText, Settings, LayoutDashboard, UtensilsCrossed, Image, FolderOpen, Ticket, Grid } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -130,6 +130,28 @@ export default function MobileBottomNav({ onCartOpen, onReceiptOpen }: MobileBot
             )}
             <ShoppingCart size={20} />
             <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/orders' ? 700 : 500, whiteSpace: 'nowrap' }}>ออเดอร์</span>
+          </Link>
+
+          <Link 
+            to="/admin/kitchen" 
+            style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textDecoration: 'none', padding: '8px', color: location.pathname === '/admin/kitchen' ? 'var(--accent)' : 'var(--text-muted)' }}
+          >
+            {location.pathname === '/admin/kitchen' && (
+              <div style={{ position: 'absolute', inset: 0, background: 'var(--accent-glow)', borderRadius: '100px', zIndex: -1 }} />
+            )}
+            <ChefHat size={20} />
+            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/kitchen' ? 700 : 500, whiteSpace: 'nowrap' }}>ห้องครัว</span>
+          </Link>
+
+          <Link 
+            to="/admin/tables" 
+            style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px', textDecoration: 'none', padding: '8px', color: location.pathname === '/admin/tables' ? 'var(--accent)' : 'var(--text-muted)' }}
+          >
+            {location.pathname === '/admin/tables' && (
+              <div style={{ position: 'absolute', inset: 0, background: 'var(--accent-glow)', borderRadius: '100px', zIndex: -1 }} />
+            )}
+            <Grid size={20} />
+            <span style={{ fontSize: '0.65rem', fontWeight: location.pathname === '/admin/tables' ? 700 : 500, whiteSpace: 'nowrap' }}>ผังโต๊ะ</span>
           </Link>
 
           <Link 
