@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, MapPin, Phone, CreditCard, CheckCircle, ArrowRight, Clock, Store, ShoppingBag as BagIcon, Truck, Upload } from 'lucide-react';
+import { User, MapPin, Phone, CreditCard, CheckCircle, ArrowRight, Clock, Store, ShoppingBag as BagIcon, Truck, Upload, X } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useOrders } from '../context/OrderContext';
 import { useSettings } from '../context/SettingsContext';
