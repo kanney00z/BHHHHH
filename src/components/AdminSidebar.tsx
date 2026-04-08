@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, ShoppingCart, UtensilsCrossed, FolderOpen, Settings, LogOut, Menu, X } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, UtensilsCrossed, FolderOpen, Settings, LogOut, Menu, X, ChefHat, Grid } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 export default function AdminSidebar() {
@@ -38,6 +38,12 @@ export default function AdminSidebar() {
         </NavLink>
         <NavLink to="/admin/orders" onClick={closeMenu} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
           <ShoppingCart size={18} /> ออเดอร์
+        </NavLink>
+        <NavLink to="/admin/kitchen" onClick={closeMenu} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`} style={{ background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', fontWeight: 'bold' }}>
+          <ChefHat size={18} /> จอห้องครัว (KDS)
+        </NavLink>
+        <NavLink to="/admin/tables" onClick={closeMenu} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
+          <Grid size={18} /> แผนผังโต๊ะ
         </NavLink>
         <NavLink to="/admin/menu" onClick={closeMenu} className={({ isActive }) => `admin-nav-item ${isActive ? 'active' : ''}`}>
           <UtensilsCrossed size={18} /> จัดการเมนู

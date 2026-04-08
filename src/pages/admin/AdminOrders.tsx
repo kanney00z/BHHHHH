@@ -14,6 +14,7 @@ const statusLabel: Record<string, string> = {
   preparing: 'กำลังเตรียม',
   delivering: 'กำลังจัดส่ง',
   delivered: 'จัดส่งแล้ว',
+  completed: 'เสร็จสิ้น (จ่ายแล้ว/เคลียร์โต๊ะ)',
   cancelled: 'ยกเลิก',
 };
 
@@ -23,7 +24,7 @@ const orderTypeLabel: Record<string, string> = {
   takeaway: '🛍️ รับกลับบ้าน'
 };
 
-const allStatuses = ['all', 'pending_pricing', 'awaiting_payment', 'pending', 'confirmed', 'preparing', 'delivering', 'delivered', 'cancelled'];
+const allStatuses = ['all', 'pending_pricing', 'awaiting_payment', 'pending', 'confirmed', 'preparing', 'delivering', 'delivered', 'completed', 'cancelled'];
 const statusFilterLabel: Record<string, string> = {
   all: 'ทั้งหมด',
   ...statusLabel,

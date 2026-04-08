@@ -93,7 +93,7 @@ export default function AdminDashboard() {
   const salesByDay = last7Days.map(date => {
     const dayOrders = orders.filter(o => 
       o.createdAt.startsWith(date) && 
-      (o.status === 'delivered' || o.status === 'delivering' || o.status === 'preparing' || o.status === 'confirmed')
+      (o.status === 'completed' || o.status === 'delivered' || o.status === 'delivering' || o.status === 'preparing' || o.status === 'confirmed')
     );
     const total = dayOrders.reduce((sum, o) => sum + o.total, 0);
     return { 

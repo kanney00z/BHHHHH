@@ -19,7 +19,8 @@ import AdminSettings from './pages/admin/AdminSettings';
 import AdminPromotions from './pages/admin/AdminPromotions';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminBanners from './components/admin/AdminBanners';
-
+import AdminKitchen from './pages/admin/AdminKitchen';
+import AdminTables from './pages/admin/AdminTables';
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { session, loading } = useAuth();
   if (loading) return null;
@@ -55,6 +56,8 @@ function App() {
                     <Route path="/admin/settings" element={<ProtectedRoute><AdminSettings /></ProtectedRoute>} />
                     <Route path="/admin/promotions" element={<ProtectedRoute><AdminPromotions /></ProtectedRoute>} />
                     <Route path="/admin/banners" element={<ProtectedRoute><AdminBanners /></ProtectedRoute>} />
+                    <Route path="/admin/kitchen" element={<ProtectedRoute><AdminKitchen /></ProtectedRoute>} />
+                    <Route path="/admin/tables" element={<ProtectedRoute><AdminTables /></ProtectedRoute>} />
                   </Routes>
                 </OrderProvider>
               </CartProvider>
