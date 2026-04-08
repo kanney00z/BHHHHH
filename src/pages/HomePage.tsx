@@ -321,19 +321,27 @@ export default function HomePage() {
         {/* Categories */}
         <section className="categories-section">
           <div style={{ padding: '0 20px 20px', maxWidth: '800px', margin: '0 auto' }}>
-            <ShimmerButton 
-              className="w-full"
-              style={{ borderRadius: '12px', minHeight: '60px' }}
-              background="var(--bg-glass)"
-              shimmerColor="var(--accent)"
-              shimmerSize="0.1em"
+            <MagicCard 
+              glowColor="rgba(255, 45, 85, 0.4)" 
               onClick={() => setIsCustomModalOpen(true)}
+              className="custom-menu-card"
+              style={{ 
+                border: '2px solid var(--accent)', 
+                background: 'linear-gradient(135deg, rgba(255,107,53,0.05) 0%, rgba(255,45,85,0.05) 100%)',
+                boxShadow: '0 8px 32px rgba(255, 107, 53, 0.15)',
+                cursor: 'pointer'
+              }}
             >
-              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', color: 'var(--text-primary)', fontWeight: 600, zIndex: 1 }}>
-                <ChefHat size={20} color="var(--accent)" />
-                {t('สั่งเมนูตามใจฉัน')}
-              </span>
-            </ShimmerButton>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', padding: '16px' }}>
+                <div style={{ background: 'var(--accent)', color: 'white', padding: '12px', borderRadius: '50%', boxShadow: '0 4px 12px var(--accent-glow)', display: 'flex' }}>
+                  <ChefHat size={24} />
+                </div>
+                <div style={{ textAlign: 'left' }}>
+                  <h3 style={{ margin: 0, fontSize: '1.15rem', color: 'var(--text-primary)', fontWeight: 700 }}>{t('สั่งเมนูตามใจฉัน')}</h3>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '0.85rem', color: 'var(--accent)' }}>{t('ให้ทางร้านอัปเดตราคาให้ตามจริง')}</p>
+                </div>
+              </div>
+            </MagicCard>
           </div>
 
           <div className="category-tabs">
