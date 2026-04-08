@@ -284,12 +284,23 @@ export default function AdminKitchen() {
                   className={`ticket-card ${order.status}`}
                 >
                   <div className="ticket-header">
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                       <span className="ticket-id">#{order.id.slice(-4).toUpperCase()}</span>
+                      
+                      {/* Order Type Badge */}
+                      <span style={{ 
+                        fontSize: '0.75rem', fontWeight: 'bold', padding: '2px 8px', borderRadius: '4px',
+                        background: order.orderType === 'dine_in' ? 'rgba(59, 130, 246, 0.2)' : order.orderType === 'takeaway' ? 'rgba(245, 158, 11, 0.2)' : 'rgba(168, 85, 247, 0.2)',
+                        color: order.orderType === 'dine_in' ? '#60a5fa' : order.orderType === 'takeaway' ? '#fbbf24' : '#c084fc',
+                        border: `1px solid ${order.orderType === 'dine_in' ? '#3b82f6' : order.orderType === 'takeaway' ? '#f59e0b' : '#a855f7'}`
+                      }}>
+                        {order.orderType === 'dine_in' ? '🍽️ ทานที่ร้าน' : order.orderType === 'takeaway' ? '🛍️ สั่งกลับบ้าน' : '🛵 จัดส่ง (Delivery)'}
+                      </span>
+
                       {order.tableNumber ? (
                         <span className="ticket-table">โต๊ะ {order.tableNumber}</span>
                       ) : (
-                        <span style={{ fontSize: '0.9rem', color: '#cbd5e1' }}>{order.customerName}</span>
+                        <span style={{ fontSize: '0.9rem', color: '#cbd5e1' }}>{order.customerName || 'ไม่ระบุชื่อ'}</span>
                       )}
                     </div>
                     <div className={`ticket-time ${waitInfo.class}`}>
