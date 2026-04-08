@@ -5,27 +5,25 @@ import { Grid, Utensils, CheckCircle, Clock, Banknote, X, Info, Receipt, Plus, M
 import { motion, AnimatePresence } from 'framer-motion';
 import AdminSidebar from '../../components/AdminSidebar';
 
+import { useSettings } from '../../context/SettingsContext';
+
 export default function AdminTables() {
   const { orders, updateOrderStatus, loading } = useOrders();
+  const { settings, updateSettings } = useSettings();
   const [selectedTable, setSelectedTable] = useState<number | null>(null);
 
-  // Dynamic Total Tables
-  const [totalTables, setTotalTables] = useState(() => {
-    const saved = localStorage.getItem('restaurant_total_tables');
-    return saved ? parseInt(saved, 10) : 20;
-  });
+  // Dynamic Total Tables from Realtime Settings
+  const totalTables = settings?.total_tables || 20;
 
-  const handleAddTable = () => {
+  const handleAddTable = async () => {
     const newTotal = totalTables + 1;
-    setTotalTables(newTotal);
-    localStorage.setItem('restaurant_total_tables', newTotal.toString());
+    await updateSettings({ total_tables: newTotal });
   };
 
-  const handleRemoveTable = () => {
+  const handleRemoveTable = async () => {
     if (totalTables > 1) {
       const newTotal = totalTables - 1;
-      setTotalTables(newTotal);
-      localStorage.setItem('restaurant_total_tables', newTotal.toString());
+      await updateSettings({ total_tables: newTotal });
       if (selectedTable === totalTables) {
         setSelectedTable(null);
       }

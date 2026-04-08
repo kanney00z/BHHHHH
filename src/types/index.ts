@@ -24,6 +24,7 @@ export interface StoreSettings {
   hero_headline: string;
   hero_highlight: string;
   hero_subheadline: string;
+  total_tables?: number;
 }
 
 export interface MenuItemOptionChoice {
