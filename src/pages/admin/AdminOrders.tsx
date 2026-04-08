@@ -138,7 +138,27 @@ export default function AdminOrders() {
           
           {/* Voice Notification Toggle */}
           <button 
-            onClick={() => setVoiceEnabled(!voiceEnabled)}
+            onClick={() => {
+              const newVal = !voiceEnabled;
+              setVoiceEnabled(newVal);
+              if (newVal) {
+                // Unlock Web Speech API & AudioContext immediately on user click
+                if ('speechSynthesis' in window) {
+                  const utterance = new SpeechSynthesisUtterance('เปิดระบบเสียงแจ้งเตือนแล้วค่ะ');
+                  utterance.lang = 'th-TH';
+                  utterance.volume = 1;
+                  speechSynthesis.speak(utterance);
+                }
+                
+                try {
+                  const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+                  if (AudioContextClass) {
+                    const ctx = new AudioContextClass();
+                    ctx.resume();
+                  }
+                } catch (e) {}
+              }
+            }}
             style={{
               display: 'flex', alignItems: 'center', gap: '8px',
               padding: '10px 16px', borderRadius: '24px',
