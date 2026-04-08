@@ -6,6 +6,7 @@ import { CartProvider } from './context/CartContext';
 import { OrderProvider } from './context/OrderContext';
 import { MenuProvider } from './context/MenuContext';
 import { SettingsProvider } from './context/SettingsContext';
+import { LanguageProvider } from './context/LanguageContext';
 import Navbar from './components/Navbar';
 import CartDrawer from './components/CartDrawer';
 import HomePage from './pages/HomePage';
@@ -34,13 +35,14 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <ToastProvider>
-          <SettingsProvider>
-            <MenuProvider>
-              <CartProvider>
-                <OrderProvider>
-                  <Navbar onCartOpen={() => setCartOpen(true)} />
-                  <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+        <LanguageProvider>
+          <ToastProvider>
+            <SettingsProvider>
+              <MenuProvider>
+                <CartProvider>
+                  <OrderProvider>
+                    <Navbar onCartOpen={() => setCartOpen(true)} />
+                    <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
                   <Routes>
                     {/* Public Routes */}
                     <Route path="/" element={<HomePage />} />
@@ -59,11 +61,12 @@ function App() {
                     <Route path="/admin/kitchen" element={<ProtectedRoute><AdminKitchen /></ProtectedRoute>} />
                     <Route path="/admin/tables" element={<ProtectedRoute><AdminTables /></ProtectedRoute>} />
                   </Routes>
-                </OrderProvider>
-              </CartProvider>
-            </MenuProvider>
-          </SettingsProvider>
-        </ToastProvider>
+                  </OrderProvider>
+                </CartProvider>
+              </MenuProvider>
+            </SettingsProvider>
+          </ToastProvider>
+        </LanguageProvider>
       </AuthProvider>
     </BrowserRouter>
   );

@@ -37,7 +37,9 @@ export function MenuProvider({ children }: { children: React.ReactNode }) {
       const mappedItems: MenuItem[] = (itemsRes.data || []).map((item: any) => ({
         id: item.id,
         name: item.name,
+        nameEn: item.nameEn,
         description: item.description,
+        descriptionEn: item.descriptionEn,
         price: item.price,
         image: item.image,
         categoryId: item.category,
@@ -81,8 +83,9 @@ export function MenuProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.from('menu_items').insert({
       id,
       name: item.name,
-      nameEn: item.name, // Mock
+      nameEn: item.nameEn || '',
       description: item.description,
+      descriptionEn: item.descriptionEn || '',
       price: item.price,
       image: item.image,
       category: item.categoryId,
@@ -101,7 +104,9 @@ export function MenuProvider({ children }: { children: React.ReactNode }) {
 
     const dbUpdates: any = {};
     if (updates.name !== undefined) dbUpdates.name = updates.name;
+    if (updates.nameEn !== undefined) dbUpdates.nameEn = updates.nameEn;
     if (updates.description !== undefined) dbUpdates.description = updates.description;
+    if (updates.descriptionEn !== undefined) dbUpdates.descriptionEn = updates.descriptionEn;
     if (updates.price !== undefined) dbUpdates.price = updates.price;
     if (updates.image !== undefined) dbUpdates.image = updates.image;
     if (updates.categoryId !== undefined) dbUpdates.category = updates.categoryId;
@@ -126,7 +131,7 @@ export function MenuProvider({ children }: { children: React.ReactNode }) {
     const { error } = await supabase.from('categories').insert({
       id,
       name: category.name,
-      nameEn: category.name, // Mock
+      nameEn: category.nameEn || '',
       icon: category.icon,
       color: '#000000', // Mock
     });

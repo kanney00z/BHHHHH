@@ -8,18 +8,21 @@ export default function AdminCategories() {
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
   const [name, setName] = useState('');
+  const [nameEn, setNameEn] = useState('');
   const [icon, setIcon] = useState('');
 
   const openAdd = () => {
     setEditId(null);
     setName('');
+    setNameEn('');
     setIcon('🍴');
     setShowModal(true);
   };
 
-  const openEdit = (cat: { id: string; name: string; icon: string }) => {
+  const openEdit = (cat: { id: string; name: string; nameEn?: string; icon: string }) => {
     setEditId(cat.id);
     setName(cat.name);
+    setNameEn(cat.nameEn || '');
     setIcon(cat.icon);
     setShowModal(true);
   };
@@ -27,9 +30,9 @@ export default function AdminCategories() {
   const handleSave = () => {
     if (!name) return;
     if (editId) {
-      updateCategory(editId, { name, icon });
+      updateCategory(editId, { name, nameEn, icon });
     } else {
-      addCategory({ name, icon });
+      addCategory({ name, nameEn, icon });
     }
     setShowModal(false);
   };
@@ -71,7 +74,10 @@ export default function AdminCategories() {
               {manageable.map(cat => (
                 <tr key={cat.id}>
                   <td data-label="ไอคอน" style={{ fontSize: '1.5rem' }}>{cat.icon}</td>
-                  <td data-label="ชื่อหมวดหมู่" style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{cat.name}</td>
+                  <td data-label="ชื่อหมวดหมู่" style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                    {cat.name} 
+                    {cat.nameEn && <span style={{display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 400}}>{cat.nameEn}</span>}
+                  </td>
                   <td data-label="จำนวนเมนู">{menuItems.filter(i => i.categoryId === cat.id).length} เมนู</td>
                   <td data-label="การแสดงผล">
                     <label style={{ position: 'relative', display: 'inline-block', width: '44px', height: '24px' }}>
@@ -120,8 +126,12 @@ export default function AdminCategories() {
                 <input value={icon} onChange={e => setIcon(e.target.value)} placeholder="🍔" style={{ fontSize: '1.5rem' }} />
               </div>
               <div className="form-group">
-                <label>ชื่อหมวดหมู่</label>
-                <input value={name} onChange={e => setName(e.target.value)} placeholder="ชื่อหมวดหมู่" />
+                <label>ชื่อหมวดหมู่ (TH)</label>
+                <input value={name} onChange={e => setName(e.target.value)} placeholder="เช่น อาหารจานเดียว" />
+              </div>
+              <div className="form-group">
+                <label>ชื่อหมวดหมู่ (EN)</label>
+                <input value={nameEn} onChange={e => setNameEn(e.target.value)} placeholder="e.g., A la carte" />
               </div>
               <div className="modal-actions">
                 <button className="btn-secondary" onClick={() => setShowModal(false)}>ยกเลิก</button>

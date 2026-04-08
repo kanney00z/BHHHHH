@@ -1,6 +1,7 @@
 export interface Category {
   id: string;
   name: string;
+  nameEn?: string;
   icon: string;
   is_active?: boolean;
 }
@@ -45,7 +46,9 @@ export interface MenuItemOption {
 export interface MenuItem {
   id: string;
   name: string;
+  nameEn?: string;
   description: string;
+  descriptionEn?: string;
   price: number;
   image: string;
   categoryId: string;

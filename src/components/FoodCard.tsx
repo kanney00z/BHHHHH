@@ -3,6 +3,7 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 import { Plus, Check, ImageIcon } from 'lucide-react';
 import { MenuItem } from '../types';
 import { useCart } from '../context/CartContext';
+import { useLanguage } from '../context/LanguageContext';
 import { MagicCard } from './magicui/MagicCard';
 
 interface FoodCardProps {
@@ -13,6 +14,7 @@ interface FoodCardProps {
 
 export default function FoodCard({ item, onAddClick, disabled = false }: FoodCardProps) {
   const { addItem } = useCart();
+  const { language, t } = useLanguage();
   const [added, setAdded] = useState(false);
 
   const handleAdd = () => {
@@ -87,14 +89,14 @@ export default function FoodCard({ item, onAddClick, disabled = false }: FoodCar
           </div>
         )}
         <div className="food-card-badges">
-          {item.popular && <span className="badge badge-popular">🔥 ยอดนิยม</span>}
-          {item.spicy && <span className="badge badge-spicy">🌶️ เผ็ด</span>}
-          {!item.available && <span className="badge badge-unavailable">หมด</span>}
+          {item.popular && <span className="badge badge-popular">🔥 {t('ยอดนิยม')}</span>}
+          {item.spicy && <span className="badge badge-spicy">🌶️ {t('เผ็ด')}</span>}
+          {!item.available && <span className="badge badge-unavailable">{t('หมด')}</span>}
         </div>
       </div>
       <div className="food-card-body">
-        <h3>{item.name}</h3>
-        <p>{item.description}</p>
+        <h3>{language === 'en' && item.nameEn ? item.nameEn : item.name}</h3>
+        <p>{language === 'en' && item.descriptionEn ? item.descriptionEn : item.description}</p>
         <div className="food-card-footer">
           <div className="food-price">
             ฿{item.price} <small>บาท</small>
@@ -104,7 +106,7 @@ export default function FoodCard({ item, onAddClick, disabled = false }: FoodCar
             onClick={handleAdd}
             disabled={!item.available || disabled}
           >
-            {added ? <><Check size={16} /> เพิ่มแล้ว</> : <><Plus size={16} /> เพิ่ม</>}
+            {added ? <><Check size={16} /> {t('เพิ่มแล้ว')}</> : <><Plus size={16} /> {t('เพิ่ม')}</>}
           </button>
         </div>
       </div>

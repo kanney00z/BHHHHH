@@ -6,7 +6,9 @@ import AdminSidebar from '../../components/AdminSidebar';
 
 const emptyForm = {
   name: '',
+  nameEn: '',
   description: '',
+  descriptionEn: '',
   price: 0,
   image: '',
   categoryId: '',
@@ -44,18 +46,17 @@ export default function AdminMenu() {
     setIsTranslating(true);
     const updates = { ...form };
     
-    // Check if it already contains English letters at the end (naive check)
-    if (updates.name && !updates.name.includes('(')) {
+    if (updates.name && !updates.nameEn) {
       const translatedName = await translateText(updates.name);
       if (translatedName) {
-        updates.name = `${updates.name} (${translatedName})`;
+        updates.nameEn = translatedName;
       }
     }
     
-    if (updates.description && !updates.description.includes('(')) {
+    if (updates.description && !updates.descriptionEn) {
       const translatedDesc = await translateText(updates.description);
       if (translatedDesc) {
-        updates.description = `${updates.description} (${translatedDesc})`;
+        updates.descriptionEn = translatedDesc;
       }
     }
     
@@ -73,7 +74,9 @@ export default function AdminMenu() {
     setEditId(item.id);
     setForm({
       name: item.name,
+      nameEn: item.nameEn || '',
       description: item.description,
+      descriptionEn: item.descriptionEn || '',
       price: item.price,
       image: item.image,
       categoryId: item.categoryId,
@@ -175,6 +178,7 @@ export default function AdminMenu() {
                   <td data-label="ชื่อเมนู" style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
                     {item.name}
                     {item.popular && <span style={{ marginLeft: 6, fontSize: '0.7rem', background: 'rgba(255,107,53,0.2)', color: 'var(--accent)', padding: '2px 6px', borderRadius: 8 }}>🔥</span>}
+                    {item.nameEn && <span style={{display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', fontWeight: 400}}>{item.nameEn}</span>}
                   </td>
                   <td data-label="หมวด">{categories.find(c => c.id === item.categoryId)?.name || '-'}</td>
                   <td data-label="ราคา" style={{ fontWeight: 600, color: 'var(--accent)' }}>฿{item.price}</td>
@@ -299,12 +303,20 @@ export default function AdminMenu() {
               </div>
 
               <div className="form-group">
-                <label>ชื่อเมนู</label>
-                <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="ชื่อเมนู" />
+                <label>ชื่อเมนู (TH)</label>
+                <input value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} placeholder="เช่น ข้าวผัดหมู" />
               </div>
               <div className="form-group">
-                <label>รายละเอียด</label>
+                <label>ชื่อเมนู (EN)</label>
+                <input value={form.nameEn} onChange={e => setForm({ ...form, nameEn: e.target.value })} placeholder="e.g. Fried Rice with Pork" />
+              </div>
+              <div className="form-group">
+                <label>รายละเอียด (TH)</label>
                 <textarea value={form.description} onChange={e => setForm({ ...form, description: e.target.value })} placeholder="รายละเอียดเมนู" />
+              </div>
+              <div className="form-group">
+                <label>รายละเอียด (EN)</label>
+                <textarea value={form.descriptionEn} onChange={e => setForm({ ...form, descriptionEn: e.target.value })} placeholder="Menu details" />
               </div>
               <div className="form-group">
                 <label>ราคา (บาท)</label>

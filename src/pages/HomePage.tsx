@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useMenu } from '../context/MenuContext';
 import { useSettings } from '../context/SettingsContext';
+import { useLanguage } from '../context/LanguageContext';
 import { MenuItem, Banner } from '../types';
 import FoodCard from '../components/FoodCard';
 import MenuItemModal from '../components/MenuItemModal';
@@ -18,6 +19,7 @@ import { supabase } from '../lib/supabase';
 export default function HomePage() {
   const { menuItems, categories } = useMenu();
   const { settings } = useSettings();
+  const { language, setLanguage, t } = useLanguage();
   const [activeCat, setActiveCat] = useState('cat-1');
   const [search, setSearch] = useState('');
   const [selectedItem, setSelectedItem] = useState<MenuItem | null>(null);
@@ -104,8 +106,12 @@ export default function HomePage() {
 
   const filtered = menuItems.filter(item => {
     const matchCat = activeCat === 'cat-1' || item.categoryId === activeCat;
-    const matchSearch = item.name.toLowerCase().includes(search.toLowerCase()) ||
-                        item.description.toLowerCase().includes(search.toLowerCase());
+    
+    const nameToSearch = language === 'en' && item.nameEn ? item.nameEn : item.name;
+    const descToSearch = language === 'en' && item.descriptionEn ? item.descriptionEn : item.description;
+
+    const matchSearch = nameToSearch.toLowerCase().includes(search.toLowerCase()) ||
+                        descToSearch.toLowerCase().includes(search.toLowerCase());
     return matchCat && matchSearch;
   });
 
@@ -315,21 +321,19 @@ export default function HomePage() {
         {/* Categories */}
         <section className="categories-section">
           <div style={{ padding: '0 20px 20px', maxWidth: '800px', margin: '0 auto' }}>
-            <MagicCard 
-              glowColor="rgba(255, 45, 85, 0.4)" 
+            <ShimmerButton 
+              className="w-full"
+              style={{ borderRadius: '12px', minHeight: '60px' }}
+              background="var(--bg-glass)"
+              shimmerColor="var(--accent)"
+              shimmerSize="0.1em"
               onClick={() => setIsCustomModalOpen(true)}
-              className="custom-menu-card"
             >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                <div style={{ background: 'var(--accent)', color: 'white', padding: '12px', borderRadius: '50%', boxShadow: '0 4px 12px var(--accent-glow)' }}>
-                  <ChefHat size={28} />
-                </div>
-                <div style={{ textAlign: 'center' }}>
-                  <h3 style={{ margin: 0, fontSize: '1.2rem', color: 'var(--text-primary)', fontWeight: 700 }}>สั่งเมนูตามใจฉัน</h3>
-                  <p style={{ margin: '4px 0 0 0', fontSize: '0.9rem', color: 'var(--text-muted)' }}>ให้ทางร้านอัปเดตราคาให้ตามจริง</p>
-                </div>
-              </div>
-            </MagicCard>
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', width: '100%', color: 'var(--text-primary)', fontWeight: 600, zIndex: 1 }}>
+                <ChefHat size={20} color="var(--accent)" />
+                {t('สั่งเมนูตามใจฉัน')}
+              </span>
+            </ShimmerButton>
           </div>
 
           <div className="category-tabs">
@@ -340,7 +344,7 @@ export default function HomePage() {
                 onClick={() => setActiveCat(cat.id)}
               >
                 <span className="cat-icon">{cat.icon}</span>
-                {cat.name}
+                {cat.id === 'cat-1' ? t('ทั้งหมด') : (language === 'en' && cat.nameEn ? cat.nameEn : cat.name)}
               </button>
             ))}
           </div>
@@ -349,7 +353,7 @@ export default function HomePage() {
         {/* Food Grid */}
         <section>
           <h2 className="section-title">
-            {activeCat === 'cat-1' ? '🍽️ เมนูทั้งหมด' : categories.find(c => c.id === activeCat)?.icon + ' ' + categories.find(c => c.id === activeCat)?.name}
+            {activeCat === 'cat-1' ? t('เมนูทั้งหมด') : (categories.find(c => c.id === activeCat)?.icon + ' ' + (language === 'en' && categories.find(c => c.id === activeCat)?.nameEn ? categories.find(c => c.id === activeCat)?.nameEn : categories.find(c => c.id === activeCat)?.name))}
           </h2>
           {filtered.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)' }}>
