@@ -57,68 +57,43 @@ export default function AdminTables() {
     }, 500); // Give QR canvas 500ms to render properly
   };
 
-  // Dynamic Total Tables from Realtime Settings
-  const totalTables = settings?.total_tables || 20;
-
-  const handleAddTable = async () => {
-    const newTotal = totalTables + 1;
-    await updateSettings({ total_tables: newTotal });
-  };
-
-  const handleRemoveTable = async () => {
-    if (totalTables > 1) {
-      const newTotal = totalTables - 1;
-      await updateSettings({ total_tables: newTotal });
-      if (selectedTable === totalTables) {
-        setSelectedTable(null);
-      }
-    }
-  };
-  
   // Calculate specific table states based on active dine-in orders
-  // Table Status logic:
-  // 1. Available (No active orders) -> Green
-  // 2. Waiting (Orders that are pending, confirmed, preparing) -> Yellow/Orange
-  // 3. Eating (Orders that are delivering or delivered) -> Blue
-  // 4. Billing (Orders that are awaiting_payment) -> Purple
   const tableData = useMemo(() => {
     const data: Record<number, { status: 'available'|'waiting'|'eating'|'billing', activeOrders: Order[] }> = {};
     
-    // Initialize tables as available
-    for (let i = 1; i <= totalTables; i++) {
-        data[i] = { status: 'available', activeOrders: [] };
-    }
+    // Initialize tables as available from localLayout
+    localLayout.forEach(table => {
+        const i = parseInt(table.label, 10);
+        if (!isNaN(i)) {
+          data[i] = { status: 'available', activeOrders: [] };
+        }
+    });
 
-    // Process only dine_in orders that are not cancelled or completed payment (if standard flow: completed is marked, but we use delivered/payment depending on backend logic. Let's assume active means not cancelled and not 'completed' - since there's no completed status, we assume 'awaiting_payment' is billing, and 'delivered' is eating but if they finish they just cancel/delete the order? Actually, there must be a way to clear the table by deleting or updating status. We will check.)
-    // Active orders exclude 'cancelled'
-    // Active orders exclude 'cancelled' and 'completed'
     const activeTableOrders = orders.filter(o => o.status !== 'cancelled' && o.status !== 'completed' && o.tableNumber);
 
     activeTableOrders.forEach(o => {
         const tNum = parseInt(o.tableNumber || '', 10);
-        if (tNum >= 1 && tNum <= totalTables) {
+        if (data[tNum]) {
             data[tNum].activeOrders.push(o);
         }
     });
 
     // Determine status per table based on its active orders
-    for (let i = 1; i <= totalTables; i++) {
+    localLayout.forEach(table => {
+        const i = parseInt(table.label, 10);
+        if (isNaN(i) || !data[i]) return;
+        
         const tOrders = data[i].activeOrders;
-        if (tOrders.length === 0) continue;
+        if (tOrders.length === 0) return;
 
-        // If any order is awaiting payment, table is Billing
         if (tOrders.some(o => o.status === 'awaiting_payment')) {
             data[i].status = 'billing';
-        } 
-        // If any order is pending/confirmed/preparing, table is Waiting
-        else if (tOrders.some(o => ['pending', 'confirmed', 'preparing', 'pending_pricing'].includes(o.status))) {
+        } else if (tOrders.some(o => ['pending', 'confirmed', 'preparing', 'pending_pricing'].includes(o.status))) {
             data[i].status = 'waiting';
-        } 
-        // Else it means orders are delivering/delivered, people are Eating
-        else {
+        } else {
             data[i].status = 'eating';
         }
-    }
+    });
 
     return data;
   }, [orders, localLayout]);
