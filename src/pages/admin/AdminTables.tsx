@@ -14,6 +14,33 @@ export default function AdminTables() {
   const [selectedTable, setSelectedTable] = useState<number | null>(null);
   const [printingTableQR, setPrintingTableQR] = useState<number | null>(null);
 
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [localLayout, setLocalLayout] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    if (settings) {
+      if (!settings.table_layout || settings.table_layout.length === 0) {
+        const fallback = [];
+        for (let i = 1; i <= (settings.total_tables || 20); i++) {
+           fallback.push({ id: String(i), label: String(i), x: ((i-1) % 5) * 140, y: Math.floor((i-1) / 5) * 140, type: 'square' });
+        }
+        setLocalLayout(fallback);
+      } else {
+        setLocalLayout(settings.table_layout);
+      }
+    }
+  }, [settings]);
+
+  const handleSaveLayout = async () => {
+    await updateSettings({ table_layout: localLayout });
+    setIsEditMode(false);
+  };
+
+  const handleAddTable = (type: 'square' | 'circle') => {
+    const newId = String(localLayout.length + 1);
+    setLocalLayout([...localLayout, { id: newId, label: newId, x: 0, y: 0, type }]);
+  };
+
   const handlePrintTableQR = (tableNum: number) => {
     setPrintingTableQR(tableNum);
     setTimeout(() => {
@@ -94,7 +121,7 @@ export default function AdminTables() {
     }
 
     return data;
-  }, [orders, totalTables]);
+  }, [orders, localLayout]);
 
   // Handle side panel close
   const closePanel = () => setSelectedTable(null);
@@ -217,7 +244,46 @@ export default function AdminTables() {
             height: calc(100vh - 140px);
             overflow-y: auto;
         }
+
+        .map-canvas-area {
+            position: relative;
+            background: var(--bg-primary);
+            border: 2px dashed var(--bg-glass-border);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            background-image: radial-gradient(var(--bg-glass-border) 1px, transparent 1px);
+            background-size: 20px 20px;
+            width: 100%;
+            height: 600px;
+            margin-top: 16px;
+            overflow: auto;
+        }
+
+        .map-table {
+            position: absolute;
+            background: var(--bg-secondary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+            border: 2px solid var(--bg-glass-border);
+            cursor: pointer;
+            transition: box-shadow 0.2s, border-color 0.2s;
+            user-select: none;
+        }
+
+        .map-table:hover { box-shadow: var(--shadow-md); border-color: rgba(255,255,255,0.2); }
+        .map-table.selected { border-color: white !important; box-shadow: 0 0 0 2px white, var(--shadow-md); }
         
+        /* Edit mode specific */
+        .map-table.editing { cursor: grab; }
+        .map-table.editing:active { cursor: grabbing; }
+
+        .type-square { border-radius: 12px; width: 100px; height: 100px; }
+        .type-circle { border-radius: 50%; width: 110px; height: 110px; }
+        .type-rectangle { border-radius: 12px; width: 160px; height: 100px; }
+
         @media (max-width: 768px) {
             .table-manager-container { flex-direction: column; }
             .table-panel {
@@ -231,29 +297,31 @@ export default function AdminTables() {
         }
       `}</style>
       
-      {/* Main Grid Area */}
+      {/* Main Area */}
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
             <h1 style={{ margin: 0, display: 'flex', alignItems: 'center', gap: 12 }}>
-               <Grid className="text-accent" /> แผนผังโต๊ะอาหารเสมือน (Interactive KDS)
+               <Grid className="text-accent" /> แผนผังโต๊ะอาหาร (Floor Plan)
             </h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, background: 'var(--bg-secondary)', padding: '6px 12px', borderRadius: 'var(--radius-full)', border: '1px solid var(--bg-glass-border)' }}>
-                <button 
-                    onClick={handleRemoveTable}
-                    disabled={totalTables <= 1}
-                    style={{ background: 'transparent', border: 'none', color: totalTables <= 1 ? 'var(--text-secondary)' : 'var(--text-primary)', cursor: totalTables <= 1 ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', padding: '4px' }}
-                >
-                    <Minus size={18} />
-                </button>
-                <span style={{ fontWeight: 800, fontFamily: 'monospace', fontSize: '1.2rem', minWidth: '40px', textAlign: 'center' }}>
-                    {totalTables} <span style={{ fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-secondary)' }}>โต๊ะ</span>
-                </span>
-                <button 
-                    onClick={handleAddTable}
-                    style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '4px' }}
-                >
-                    <Plus size={18} />
-                </button>
+            
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                {isEditMode ? (
+                    <>
+                        <button onClick={() => handleAddTable('square')} style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--bg-glass-border)', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <Plus size={16}/> สี่เหลี่ยม
+                        </button>
+                        <button onClick={() => handleAddTable('circle')} style={{ background: 'var(--bg-secondary)', color: 'var(--text-primary)', border: '1px solid var(--bg-glass-border)', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                            <Plus size={16}/> วงกลม
+                        </button>
+                        <button onClick={handleSaveLayout} style={{ background: 'var(--success)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
+                            บันทึกผังร้าน
+                        </button>
+                    </>
+                ) : (
+                    <button onClick={() => setIsEditMode(true)} style={{ background: 'var(--accent)', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}>
+                        แก้ไขผังร้าน (Edit Layout)
+                    </button>
+                )}
             </div>
         </div>
         
@@ -262,35 +330,50 @@ export default function AdminTables() {
             <div className="stat-item"><div className="stat-dot bg-waiting"></div> รอกิน / กำลังทำอาหาร</div>
             <div className="stat-item"><div className="stat-dot bg-eating"></div> กำลังเสิร์ฟ / กำลังกิน</div>
             <div className="stat-item"><div className="stat-dot bg-billing"></div> รอเช็คบิล</div>
+            {isEditMode && <div className="stat-item" style={{color: 'var(--accent)', fontWeight: 'bold', marginLeft: 'auto'}}>💡 ลากเพื่อย้ายตำแหน่งของโต๊ะได้เลย</div>}
         </div>
 
-        <div className="table-grid">
-            {Object.keys(tableData).map((key) => {
-                const tableNum = parseInt(key);
-                const info = tableData[tableNum];
+        <div className="map-canvas-area">
+            {localLayout.map((table) => {
+                const tableNum = parseInt(table.label);
+                const info = tableNum && tableData[tableNum] ? tableData[tableNum] : { status: 'available', activeOrders: [] };
                 
-                let icon = <CheckCircle size={28} className="c-available" style={{ opacity: 0.8 }} />;
-                if (info.status === 'waiting') icon = <Clock size={28} className="c-waiting" />;
-                if (info.status === 'eating') icon = <Utensils size={28} className="c-eating" />;
-                if (info.status === 'billing') icon = <Banknote size={28} className="c-billing" />;
+                let icon = <CheckCircle size={24} className="c-available" style={{ opacity: 0.8 }} />;
+                if (info.status === 'waiting') icon = <Clock size={24} className="c-waiting" />;
+                if (info.status === 'eating') icon = <Utensils size={24} className="c-eating" />;
+                if (info.status === 'billing') icon = <Banknote size={24} className="c-billing" />;
 
                 return (
-                    <div 
-                        key={tableNum} 
-                        className={`table-card t-${info.status} ${selectedTable === tableNum ? 'selected' : ''}`}
-                        onClick={() => setSelectedTable(tableNum)}
+                    <motion.div 
+                        key={table.id}
+                        drag={isEditMode}
+                        dragMomentum={false}
+                        onDragEnd={(_, info) => {
+                            if (!isEditMode) return;
+                            setLocalLayout(prev => prev.map(t => t.id === table.id ? { ...t, x: t.x + info.offset.x, y: t.y + info.offset.y } : t));
+                        }}
+                        style={{ x: table.x, y: table.y }}
+                        className={`map-table type-${table.type} t-${info.status} ${selectedTable === tableNum && !isEditMode ? 'selected' : ''} ${isEditMode ? 'editing' : ''}`}
+                        onClick={() => {
+                            if (!isEditMode && tableNum) setSelectedTable(tableNum);
+                        }}
                     >
-                        {info.activeOrders.length > 0 && <div className="orders-badge">{info.activeOrders.length}</div>}
-                        <div className="table-number">{tableNum}</div>
-                        <div style={{ marginBottom: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-primary)', width: 48, height: 48, borderRadius: '50%', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-                            {icon}
-                        </div>
-                        <div className={`table-status-label c-${info.status}`} style={{ background: 'var(--bg-primary)', padding: '4px 12px', borderRadius: 999, fontSize: '0.75rem', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
-                            {info.status === 'available' ? 'ว่าง' : 
-                             info.status === 'waiting' ? 'รอกิน' : 
-                             info.status === 'eating' ? 'กำลังกิน' : 'รอจ่าย'}
-                        </div>
-                    </div>
+                        {isEditMode && (
+                           <button onClick={(e) => {
+                               e.stopPropagation();
+                               setLocalLayout(prev => prev.filter(t => t.id !== table.id));
+                           }} style={{ position: 'absolute', top: -8, right: -8, background: 'var(--accent)', color: 'white', border: 'none', borderRadius: '50%', width: 24, height: 24, cursor: 'pointer', zIndex: 10 }}>×</button>
+                        )}
+                        {!isEditMode && info.activeOrders.length > 0 && <div className="orders-badge" style={{top: -8, right: -8}}>{info.activeOrders.length}</div>}
+                        
+                        <div className="table-number" style={{ fontSize: table.type === 'circle' ? '1.8rem' : '1.5rem'}}>{table.label}</div>
+                        
+                        {!isEditMode && (
+                            <div style={{ marginTop: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-primary)', width: 36, height: 36, borderRadius: '50%', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                                {icon}
+                            </div>
+                        )}
+                    </motion.div>
                 );
             })}
         </div>

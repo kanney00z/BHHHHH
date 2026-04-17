@@ -6,6 +6,14 @@ export interface Category {
   is_active?: boolean;
 }
 
+export interface TableLayoutItem {
+  id: string;
+  label: string;
+  x: number;
+  y: number;
+  type: 'square' | 'circle' | 'rectangle';
+}
+
 export interface StoreSettings {
   id: number;
   restaurant_name: string;
@@ -27,6 +35,7 @@ export interface StoreSettings {
   hero_highlight: string;
   hero_subheadline: string;
   total_tables?: number;
+  table_layout?: TableLayoutItem[];
 }
 
 export interface MenuItemOptionChoice {
