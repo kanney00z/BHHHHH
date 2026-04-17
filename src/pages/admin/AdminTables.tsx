@@ -337,7 +337,7 @@ export default function AdminTables() {
                            <button onClick={(e) => {
                                e.stopPropagation();
                                setLocalLayout(prev => prev.filter(t => t.id !== table.id));
-                           }} style={{ position: 'absolute', top: -8, right: -8, background: 'var(--accent)', color: 'white', border: 'none', borderRadius: '50%', width: 24, height: 24, cursor: 'pointer', zIndex: 10 }}>×</button>
+                           }} style={{ position: 'absolute', top: 6, right: 6, background: 'var(--accent)', color: 'white', border: 'none', borderRadius: '50%', width: 24, height: 24, cursor: 'pointer', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1rem', lineHeight: 1 }}>×</button>
                         )}
                         {!isEditMode && info.activeOrders.length > 0 && <div className="orders-badge" style={{top: -8, right: -8}}>{info.activeOrders.length}</div>}
                         
