@@ -504,7 +504,7 @@ export default function CheckoutPage() {
                 value={promoCodeInput}
                 onChange={e => setPromoCodeInput(e.target.value)}
                 placeholder="กรอกรหัสส่วนลด..."
-                style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid var(--border)', background: 'var(--bg-primary)', color: 'var(--text-primary)', textTransform: 'uppercase' }}
+                style={{ flex: 1, padding: '12px', borderRadius: '8px', border: '1px solid var(--bg-glass-border)', background: 'var(--bg-primary)', color: 'var(--text-primary)', textTransform: 'uppercase' }}
                 disabled={activePromoCode.length > 0}
               />
               {activePromoCode ? (
@@ -525,7 +525,7 @@ export default function CheckoutPage() {
                   type="button" 
                   onClick={applyPromoCode}
                   disabled={isVerifyingPromo || !promoCodeInput.trim()}
-                  style={{ padding: '12px 16px', background: 'var(--primary)', color: 'white', borderRadius: '8px', border: 'none', cursor: isVerifyingPromo || !promoCodeInput.trim() ? 'not-allowed' : 'pointer', fontWeight: 'bold', opacity: isVerifyingPromo || !promoCodeInput.trim() ? 0.7 : 1 }}
+                  style={{ padding: '12px 16px', background: 'var(--accent)', color: 'white', borderRadius: '8px', border: 'none', cursor: isVerifyingPromo || !promoCodeInput.trim() ? 'not-allowed' : 'pointer', fontWeight: 'bold', opacity: isVerifyingPromo || !promoCodeInput.trim() ? 0.7 : 1 }}
                 >
                   {isVerifyingPromo ? 'กำลังตรวจสอบ...' : 'ใช้โค้ด'}
                 </button>
