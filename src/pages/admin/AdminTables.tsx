@@ -344,9 +344,16 @@ export default function AdminTables() {
                         <div className="table-number" style={{ fontSize: table.type === 'circle' ? '1.8rem' : '1.5rem'}}>{table.label}</div>
                         
                         {!isEditMode && (
-                            <div style={{ marginTop: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-primary)', width: 36, height: 36, borderRadius: '50%', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-                                {icon}
-                            </div>
+                            <>
+                                <div style={{ marginTop: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg-primary)', width: 36, height: 36, borderRadius: '50%', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
+                                    {icon}
+                                </div>
+                                <div className={`table-status-label c-${info.status}`} style={{ background: 'var(--bg-primary)', padding: '2px 8px', borderRadius: 999, fontSize: '0.65rem', marginTop: 4, boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                                    {info.status === 'available' ? 'ว่าง' : 
+                                     info.status === 'waiting' ? 'รอกิน' : 
+                                     info.status === 'eating' ? 'กำลังกิน' : 'รอจ่าย'}
+                                </div>
+                            </>
                         )}
                     </motion.div>
                 );
