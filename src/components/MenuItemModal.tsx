@@ -88,8 +88,8 @@ export default function MenuItemModal({ item, onClose }: MenuItemModalProps) {
   const finalPrice = item.price + totalOptionPrice;
 
   return (
-    <div className="modal-overlay open" onClick={onClose} style={{ zIndex: 2000, display: 'flex', justifyContent: 'center', alignItems: 'center', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', background: 'rgba(0,0,0,0.5)' }}>
-      <div className="modal-content" onClick={e => e.stopPropagation()} style={{ zIndex: 2001, maxWidth: 500, width: '90%', padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative', background: 'var(--bg-secondary)', borderRadius: '24px', border: '1px solid rgba(255, 255, 255, 0.15)', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2)' }}>
+    <div className="modal-overlay open" onClick={onClose} style={{ zIndex: 6000, display: 'flex', justifyContent: 'center', alignItems: 'center', backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)', background: 'rgba(0,0,0,0.5)' }}>
+      <div className="modal-content" onClick={e => e.stopPropagation()} style={{ zIndex: 6001, maxWidth: 500, width: '90%', padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', position: 'relative', background: 'var(--bg-secondary)', borderRadius: '24px', border: '1px solid rgba(255, 255, 255, 0.15)', boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.2)' }}>
         
         <div style={{ position: 'relative' }}>
           {item.image ? (
