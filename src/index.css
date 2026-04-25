@@ -1545,7 +1545,7 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 3000;
+  z-index: 6000;
   animation: fadeIn 0.3s ease;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
